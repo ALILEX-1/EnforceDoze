@@ -201,4 +201,5 @@
     <string name="name_of_package_doze_block">Ingresa el nombre del paquete de la aplicación que deseas bloquear para que no se ejecute durante Doze</string>
     <string name="app_blocklist_setting_title">Lista de aplicaciones bloqueadas en Doze</string>
     <string name="disable_motion_sensors_setting_title">Desactivar los sensores de movimiento con la pantalla apagada</string>
+    <string name="copy_command_button_text">Comando copiar</string>
 </resources>
