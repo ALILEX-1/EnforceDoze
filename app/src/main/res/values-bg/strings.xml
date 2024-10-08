@@ -1,2 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">EnforceDoze</string>
+    <string name="service_inactive">Услугата EnforceDoze е изключена</string>
+    <string name="service_active">Услугата EnforceDoze е включена</string>
+    <string name="service_disabled">Услугата EnforceDoze забранена</string>
+    <string name="root_workaround_button_text">Заобиколен път (със SU)</string>
+    <string name="no_root_workaround_dialog_title">Заобиколен път (без SU)</string>
+    <string name="root_workaround_text">Достъпът до правата на суперпотребителя е отказан или липсва! Аки липсва такъв, докоснете „Заобиколен път (със SU)“, за да получите инструкции как да включите режима без достъп до суперпотребителя</string>
+    <string name="close_button_text">Затваряне</string>
+    <string name="more_info_text">Подробности</string>
+    <string name="doze_unsupported_more_info_title">Включване на Doze на неподдържани устройства</string>
+    <string name="enable_doze_button_text">Включване на режим Doze</string>
+    <string name="okay_button_text">Добре</string>
+    <string name="copy_command_button_text">Копиране на команда</string>
+    <string name="share_command_button_text">Споделяне на команда</string>
+    <string name="open_security_settings_button_text">Настройки за сигурност</string>
+    <string name="lockscreen_timeout_dialog_text_p2">" минути). Което значи, че устройството не "</string>
+    <string name="lockscreen_timeout_dialog_text_p3">"се заключва автоматичпно след изключване на екрана докато не изминат "</string>
+    <string name="lockscreen_timeout_dialog_text_p4">" минути. Това също означава, че EnforceDoze ще чака "</string>
+    <string name="lockscreen_timeout_dialog_title">Време за заключване</string>
+    <string name="lockscreen_timeout_snackbar_text">Времето на изчакване преди заключване е голямо!</string>
+    <string name="lockscreen_timeout_dialog_text_p1">Времето на изчакване преди заключване е голямо (</string>
+    <string name="more_info_menu_item">Подробности</string>
+    <string name="doze_unsupported_more_info">При някои устройства режимът Doze е изключен от производителя. Тази настройка може да го включи на устройства, при които по подразбиране е изключен.\n\nЗабележка: Ще трябва да включвате настройката всеки път, след рестарт на телефона.</string>
+    <string name="no_root_workaround_dialog_text">Ако устройството няма достъп до правата на суперпотребителя, можете ръчно да дадете разрешението „android.permission.DUMP“ (и „android.permission.WRITE_SECURE_SETTINGS“, ако сте с Nougat) на това приложение, като изпълните следната команда за ADB от компютъра си (командата не се разделя, пише се на един ред):\n\n„adb -d shell pm grant com.akylas.enforcedoze android.permission.DUMP“ и същото с разрешението WRITE_SECURE_SETTINGS (ако сте на Nougat)\n\nСлед като изпълните командите рестартирайте приложението, след което ще получите достъп до приложението.</string>
+    <string name="lockscreen_timeout_setting_title">Пренебрегване на времето за заключване</string>
+    <string name="lockscreen_timeout_setting_summary">Пренебрегване на времето на изчакване преди заключване и включване на Doze веднага след изключване на екрана</string>
+    <string name="lockscreen_timeout_dialog_text_p6">" минути преди да включи Doze, използвайки временен WakeLock. Ако желаете EnforceDoze да включва Doze , намалете времето за заключване на екрана на Веднага в настройките за сигурност на устройството. Ако искате EnforceDoze да включва Doze независимо от времетраенето на заключване на екрана, включете настройката „Пренебрегване на времето за заключване“ в настройките на EnforceDoze."</string>
+</resources>
