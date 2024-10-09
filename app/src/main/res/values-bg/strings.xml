@@ -10,7 +10,7 @@
     <string name="close_button_text">Затваряне</string>
     <string name="more_info_text">Подробности</string>
     <string name="doze_unsupported_more_info_title">Включване на Doze на неподдържани устройства</string>
-    <string name="enable_doze_button_text">Включване на режим Doze</string>
+    <string name="enable_doze_button_text">Включване на режима на Doze</string>
     <string name="okay_button_text">Добре</string>
     <string name="copy_command_button_text">Копиране на команда</string>
     <string name="share_command_button_text">Споделяне на команда</string>
@@ -27,4 +27,12 @@
     <string name="lockscreen_timeout_setting_title">Пренебрегване на времето за заключване</string>
     <string name="lockscreen_timeout_setting_summary">Пренебрегване на времето на изчакване преди заключване и включване на Doze веднага след изключване на екрана</string>
     <string name="lockscreen_timeout_dialog_text_p6">" минути преди да включи Doze, използвайки временен WakeLock. Ако желаете EnforceDoze да включва Doze , намалете времето за заключване на екрана на Веднага в настройките за сигурност на устройството. Ако искате EnforceDoze да включва Doze независимо от времетраенето на заключване на екрана, включете настройката „Пренебрегване на времето за заключване“ в настройките на EnforceDoze."</string>
+    <string name="requesting_su_access_text">Искане на достъп до суперпотребителя…</string>
+    <string name="loading_installed_apps_text">Зареждане на списък с приложенията…</string>
+    <string name="whitelisting_text">Бял списък</string>
+    <string name="stats_summary_text" formatted="false">Изразходвано през посления Doze: %1$d% %</string>
+    <string name="stats_long_text" formatted="false">Последно изключване на екрана: %1$s\nВреме в режим на Doze: %2$d минути\nИзразходвано през последния Doze: %3$d %</string>
+    <string name="error_text">Грешка</string>
+    <string name="please_wait_text">Изчакайте</string>
+    <string name="read_logcat_su_not_avail_or_denied_error_text">Достъпът до правата на суперпотребителя е отказан или липсва и за това дневникът не може да бъде прочетен.\n\nЗа да използвате тази способност на приложението, разрешете READ_LOGS чрез ADB: „adb shell pm grant com.akylas.enforcedoze android.permission.READ_LOGS“ (без кавичките)</string>
 </resources>
