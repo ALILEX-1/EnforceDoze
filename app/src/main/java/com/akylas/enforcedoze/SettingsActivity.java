@@ -239,27 +239,6 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 }
             });
-            turnOffDataInDoze.setOnPreferenceChangeListener((preference, o) -> {
-                final boolean newValue = (boolean) o;
-                if (!newValue) {
-                    return true;
-                } else {
-                    if (isSuAvailable) {
-                        log("Phone is rooted and SU permission granted");
-                        log("Granting android.permission.READ_PHONE_STATE to com.akylas.enforcedoze");
-                        executeCommand("pm grant com.akylas.enforcedoze android.permission.READ_PHONE_STATE");
-                        return true;
-                    } else {
-                        log("SU permission denied or not available");
-                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
-                        builder.setTitle(getString(R.string.error_text));
-                        builder.setMessage(getString(R.string.su_perm_denied_msg));
-                        builder.setPositiveButton(getString(R.string.close_button_text), (dialogInterface, i) -> dialogInterface.dismiss());
-                        builder.show();
-                        return false;
-                    }
-                }
-            });
 
             whitelistMusicAppNetwork.setOnPreferenceChangeListener((preference, o) -> {
                 final boolean newValue = (boolean) o;
@@ -491,11 +470,11 @@ public class SettingsActivity extends AppCompatActivity {
                             open((success, reason) -> {
                                 if (reason != Shell.OnShellOpenResultListener.SHELL_RUNNING) {
                                     log("Error opening shell: exitCode " + reason);
-                                    isSuAvailable = false;
+//                                    isSuAvailable = false;
                                 } else {
                                     nonRootSession.addCommand(command, 0, (Shell.OnCommandResultListener2) (commandCode, exitCode, STDOUT, STDERR) -> {
                                         printShellOutput(STDOUT);
-                                        isSuAvailable = false;
+//                                        isSuAvailable = false;
                                     });
                                 }
                             });
