@@ -362,12 +362,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         if (serviceEnabled) {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setTitle("Warning");
-            builder.setMessage("Modifying Doze tunables will turn off ForceDoze, as ForceDoze overrides Doze tunables by default in order to put your device immediately into Doze mode.\n\nAre you sure you want to continue?");
+            builder.setMessage("Modified Doze tunables will be overriden when not using root, as ForceDoze overrides Doze tunables by default in order to put your device immediately into Doze mode.\n\nAre you sure you want to continue?");
             builder.setPositiveButton(getString(R.string.yes_button_text), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
-                    toggleForceDozeSwitch.setChecked(false);
+//                    toggleForceDozeSwitch.setChecked(false);
                     startActivity(new Intent(MainActivity.this, DozeTunablesActivity.class));
                 }
             });

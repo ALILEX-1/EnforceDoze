@@ -2,6 +2,7 @@ package com.akylas.enforcedoze;
 
 import static com.akylas.enforcedoze.Utils.logToLogcat;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -62,6 +63,7 @@ public class DozeTunablesActivity extends AppCompatActivity {
     private long MMS_TEMP_APP_WHITELIST_DURATION = 60 * 1000L;
     private long SMS_TEMP_APP_WHITELIST_DURATION = 20 * 1000L;
     private long NOTIFICATION_WHITELIST_DURATION = 30 * 1000L;
+    private SharedPreferences preferences;
 
     private static void log(String message) {
         logToLogcat(TAG, message);
@@ -71,7 +73,6 @@ public class DozeTunablesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loadTunables();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -115,6 +116,8 @@ public class DozeTunablesActivity extends AppCompatActivity {
 
     public void loadTunables() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //TODO: load current tunables
         LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT, "300000"));
         LIGHT_PRE_IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_PRE_IDLE_TIMEOUT, "600000"));
         LIGHT_IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_TIMEOUT, "300000"));
@@ -226,7 +229,8 @@ public class DozeTunablesActivity extends AppCompatActivity {
         }
     }
 
-    public static class DozeTunablesFragment extends PreferenceFragment {
+    @SuppressLint("ValidFragment")
+    public  class DozeTunablesFragment extends PreferenceFragment {
 
         MaterialDialog grantPermProgDialog;
         boolean isSuAvailable = false;
@@ -271,6 +275,7 @@ public class DozeTunablesActivity extends AppCompatActivity {
                             if (!Utils.isSecureSettingsPermissionGranted(getActivity())) {
                                 executeCommand("pm grant com.akylas.enforcedoze android.permission.WRITE_SECURE_SETTINGS");
                             }
+                            loadTunables();
                         } else {
                             log("SU permission denied or not available");
                             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
