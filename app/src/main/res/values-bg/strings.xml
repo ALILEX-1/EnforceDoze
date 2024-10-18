@@ -6,7 +6,7 @@
     <string name="service_disabled">Услугата EnforceDoze забранена</string>
     <string name="root_workaround_button_text">Заобиколен път (със SU)</string>
     <string name="no_root_workaround_dialog_title">Заобиколен път (без SU)</string>
-    <string name="root_workaround_text">Достъпът до правата на суперпотребителя е отказан или липсва! Аки липсва такъв, докоснете „Заобиколен път (със SU)“, за да получите инструкции как да включите режима без достъп до суперпотребителя</string>
+    <string name="root_workaround_text">Достъпът до правата на суперпотребителя е отказан или липсва! Ако липсва такъв, докоснете „Заобиколен път (със SU)“, за да получите инструкции как да включите режима без достъп до суперпотребителя</string>
     <string name="close_button_text">Затваряне</string>
     <string name="more_info_text">Подробности</string>
     <string name="doze_unsupported_more_info_title">Включване на Doze на неподдържани устройства</string>
@@ -30,7 +30,7 @@
     <string name="requesting_su_access_text">Искане на достъп до суперпотребителя…</string>
     <string name="loading_installed_apps_text">Зареждане на списък с приложенията…</string>
     <string name="whitelisting_text">Бял списък</string>
-    <string name="stats_summary_text" formatted="false">Изразходвано през посления Doze: %1$d% %</string>
+    <string name="stats_summary_text" formatted="false">Изразходвано през последния Doze: %1$d% %</string>
     <string name="stats_long_text" formatted="false">Последно изключване на екрана: %1$s\nВреме в режим на Doze: %2$d минути\nИзразходвано през последния Doze: %3$d %</string>
     <string name="error_text">Грешка</string>
     <string name="please_wait_text">Изчакайте</string>
@@ -85,7 +85,7 @@
     <string name="settings_menu_item">Настройки</string>
     <string name="donate_menu_item">Даряване</string>
     <string name="doze_unsupported_menu_item">Включване на Doze на неподдържани устройства</string>
-    <string name="doze_stats_menu_item">Статистика за Doze</string>
+    <string name="doze_stats_menu_item">Статистика за батерията в Doze</string>
     <string name="donate_dialog_title">Подкрепете работата ми</string>
     <string name="donate_dialog_button_text">Желая да даря</string>
     <string name="about_forcedoze_setting_title">Относно EnforceDoze</string>
@@ -122,4 +122,41 @@
     <string name="remove_package_menu_item">Премахване на пакет</string>
     <string name="compact_view_menu_item">Компактно</string>
     <string name="disable_stats_setting_summary">Изключване на статистиката на EnforceDoze</string>
+    <string name="app_already_in_blocklist">Приложението е вече в списъка!</string>
+    <string name="clearing_doze_stats_text">Премахване на статистиката…</string>
+    <string name="tile_label">EnforceDoze</string>
+    <string name="app_blocklist_setting_title">Черен списък за приложения в Doze</string>
+    <string name="app_doesnt_exist_in_blocklist">Приложението не е в списъка, невъзможно е да бъде премхнато.</string>
+    <string name="notifications_permission_explanation">За да открива приложения, които възпроизвеждат музика, приложението трябва да прочете показваните в момента известия и затова се нуждае от разрешение</string>
+    <string name="whitelist_music_app_network_setting_title">Разрешаване на музикалните приложения</string>
+    <string name="doze_stats_battery_icon_meaning_dialog_text">Пиктограмата на батерията със светкавица показва, че използването ѝ по време на сеанс на Doze е било в норма, а с възклицателен, че е надвишило нормата. Ако използването на батерията надвишава нормата, ви съветваме да използвате GSAM или друго приложение за статистика на батерията, за да проучите какво я е изтощило</string>
+    <string name="app_blocklist_dialog_text">Някои приложения могат да стартират себе си и да изпълняват фоновите си услуги дори по време на Doze, като по този начин не му позволяват да ви осигури по-дълъг живот на батерията. Можете да използвате тази възможност, за да забраните на такива приложения да работят по време на Doze. Забележка: Изключването на дадено приложение означава, че то и фонови те му услуги няма да работят по време на Doze. Също така няма да получавате известия от него. Не изключвайте приложения, които са ви необходими по време на Doze.\n\nНЕ изключвайте системните приложения, като SystemUI и други, защото това ще доведе до невъзможност за стартиране на устройството.</string>
+    <string name="how_doze_works_dialog_text">Как работи режимът Doze:\n\nАко потребителят остави устройството изключено от зарядно устройство и неподвижно за определен период от време (30 минути) с изключен екран, то влиза в режим на Doze. В този режим системата ограничава достъпа на приложенията до мрежови услуги и интензивно използване на процесора, като по този начин се опитва да пести батерия. Също така отлага техните задачи, синхронизации и стандартни будилници.\n\nПериодично системата излиза от режим Doze за кратко време, за да позволи на приложенията да завършат отложените си дейности. В този прозорец системата изпълнява всички отложени синхронизации, задачи и будилници и разрешава на приложенията достъп до мрежата.\n\nНа края на всеки такъв прозорец системата отново влиза в режим на Doze, като спира достъпа до мрежата и отлага задачите, синхронизациите и будилниците. С течение на времето системата планира такива прозорци все по-рядко, което води до намалена консумация на батерията при по-продължителна неактивност, когато устройството не е свързано със зарядно устройство.\n\nЩом потребителят събуди устройството, като го премести, включи екрана или свърже към зарядно устройство, системата излиза от режим Doze и всички приложения се връщат към нормалния си режим на работа.\n\nКак работи EnforceDoze:\n\nEnforceDoze кара устройството да влиза в режим Doze веднага след изключване на екрана (или след определено от потребителя забавяне), вместо да чака 30 минути, докато устройството стане неподвижно. Освен това EnforceDoze излючва и сензорите за движение на устройството, така че устройството не излиза от Doze, ако го преместите. Doze ще се изключи само по време на прозореца за поддръжка (както е обяснено по-горе) или когато включите екрана, което означава, че ще остане в режим Doze много по-дълго време, стига екранът на устройството е изключен, което означава, че икономията на батерията ще бъде много по-голяма от нормалния режим на Doze.</string>
+    <string name="reset_complete_dialog_text">Приложението EnforceDoze е нулирано. Направени са следните промени:\n\n1) спиране на услугата EnforceDoze\n2) включване на сензорите, в случай че са изключени\n3) изклюпване и включване режима Doze, за да се гарантира, че режимът Doze е включен правилно\n4) нулиране на предпочитанията на приложенията\n5) отнемане на разрешенията DUMP, WRITE_SECURE_SETTINGS, READ_PHONE_STATE, WRITE_SETTINGS, READ_LOGS (ако са дадени)\n\nПрепоръчително е да рестартирате устройството. Приложението ще рестартира сега!</string>
+    <string name="translation_credits_dialog_text">Благодаря на следните хора за превода на EnforceDoze на други езици:\n\nИспански: monza1412 (XDA)\nПортугалски (Бразилия): GamerVicioX (GitHub)\nРуски: HardSer (GitHub)\nНемски: okij (XDA)\nКитайски (традиционен): osk2 (GitHub)\nТурски: Shepards (XDA)</string>
+    <string name="notif_blocklist_setting_summary">Предотвратяване на получаването на известия в режим на Doze</string>
+    <string name="notif_blocklist_setting_title">Черен списък за известия в Doze</string>
+    <string name="app_blocklist_setting_summary">Предотвратяване на приложенията (и техни услуги във фонов режим) да работят при Doze</string>
+    <string name="name_of_package_doze_block">Въведете името на пакета на приложението, което да спре да работи по време на Doze</string>
+    <string name="name_of_package_doze_block_remove">Въведете името на пакета на приложението, което да премахнете от черния списък за приложения на Doze</string>
+    <string name="loading_blocked_packages">Зареждане на спрените приложения</string>
+    <string name="app_blocklist_dialog_title">Забранителен списък за приложения</string>
+    <string name="name_of_package_notif_block">Въведете името на пакета на приложението, чиито известия да не работят по време на Doze</string>
+    <string name="name_of_package_notif_block_remove">Въведете името на пакета на приложението, което да премахнете от черния списък за известия на Doze</string>
+    <string name="notif_blocklist_dialog_title">Забранителен списък за известия</string>
+    <string name="root_required_text">Необходим е достъп до правата на суперпотребителя</string>
+    <string name="notif_blocklist_dialog_text">Някои приложения могат да получават известия дори и устройството да е в режим на Doze, като използват съобщения с висок приоритет на FCM. Това е полезно, но понякога може да доведе до изтощаване на батерията, ако приложението доставя много известия. Ако приложението не предлага никакъв начин за предотвратяване на доставянето на много известия по време на режим Doze (и по този начин за изтощаване на батерията), можете да използвате тази настройка, за да предотвратите доставянето на известия от такова приложение, докато то е в режим на Doze.</string>
+    <string name="block_app_dialog_title">Забраняване на приложение</string>
+    <string name="block_app_notif_dialog_title">Забраняване на известия от приложение</string>
+    <string name="applied_success_text">Приложено!</string>
+    <string name="adb_command_text">Команда на ADB</string>
+    <string name="copy_to_clipboard_button_text">Копиране</string>
+    <string name="tunables_su_not_available_error_text">Достъпът до правата на суперпотребителя е отказан или липсва! Тези права са необходими, за да използвате тази възможност! Можете да продължите, но няма да можете да запазите настройките, а само да ги копирате.</string>
+    <string name="stats_no_data">Няма статистика за Doze</string>
+    <string name="notification_channel_stats_name">Статистика за Doze</string>
+    <string name="notification_channel_stats_description">Статистика за батерията в Doze</string>
+    <string name="notification_channel_tips_name">Информация</string>
+    <string name="notification_channel_tips_description">Информация относно съвместимостта</string>
+    <string name="notifications_permission">Разрешение за достъп до известията</string>
+    <string name="whitelist_music_app_network_setting_summary">Без изключване на мрежите, ако някое приложение възпроизвежда музика</string>
 </resources>
