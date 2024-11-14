@@ -95,13 +95,19 @@ jobs:
         run: | 
           echo "CURRENT_VERSION_CODE=$(bundle exec fastlane run android_get_version_code | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
 
+
+      - id: release_type_string
+        uses: ASzc/change-string-case-action@v6
+        with:
+          string: ${{ github.event.inputs.release_type }}
+
       - name: Bump release version
         id: bump_version
         if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
-        uses: christian-draeger/increment-semantic-version@1.1.0
+        uses: boromir674/action-semver-bumper@v1.0.
         with:
-          current-version: ${{ env.CURRENT_VERSION }}
-          version-fragment: ${{ github.event.inputs.release_type }}
+          sem_ver: ${{ env.CURRENT_VERSION }}
+          bump_operator: ${{ steps.release_type_string.outputs.uppercase }}
 
       - name: update Version
         if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
