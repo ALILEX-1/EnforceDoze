@@ -158,7 +158,7 @@ jobs:
       - name: publish github
         if: github.event.inputs.github == 'true'
         run: |
-          bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true
+          bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true --verbose
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
