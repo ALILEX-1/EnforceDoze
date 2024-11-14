@@ -178,8 +178,6 @@ lane :build_flavor do |params|
         push_git_tags(force: true)
       end
     end
-    # yarn lock might have change we dont want to commit it
-    reset_git_repo( force: true, files: ["yarn.lock", "package.json"])
     # we need to pull to be able to push again
     git_pull
     # push any change
