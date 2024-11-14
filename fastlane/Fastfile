@@ -147,7 +147,7 @@ lane :build_flavor do |params|
     when 'github'
       set_github_release(
         repository_name: repository_name,
-        api_token: ENV["GH_TOKEN"],
+        api_token: ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"],
         name: "v#{version} Build #{versionCode}",
         tag_name: tag,
         description: changelog,
