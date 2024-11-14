@@ -100,7 +100,7 @@ jobs:
         if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
         uses: christian-draeger/increment-semantic-version@1.1.0
         with:
-          current-version: env.CURRENT_VERSION
+          current-version: ${{ env.CURRENT_VERSION }}
           version-fragment: 'feature'
 
       - name: update Version
