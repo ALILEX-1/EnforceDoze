@@ -93,7 +93,7 @@ lane :build_flavor do |params|
   # and so to map errors correctly we use different dist for ios and android
   sentryDist =  versionCode + '.' + platform # optional distribution of the release usually the buildnumber
 
-  repository_name = ENV['REPOSITORY']
+  repository_name = ENV['REPOSITORY'].match(/([^\/]+\/[^\/]+)(\.git)?$/)[1]
   dist_path = File.expand_path(File.join(project_root_path, 'dist'))
   puts "working directory:"  + Dir.getwd
   puts "dist_path:"  + dist_path
