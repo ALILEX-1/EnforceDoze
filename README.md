@@ -38,6 +38,14 @@ Here is a table of features
 | **Ignore disable with hotspot** | ✅ | ✅ |
 | **Whitelist music app**                      | ✅     | ✅      |
 
+## Permissions
+
+* `android.permission.QUERY_ALL_PACKAGES`: needed to select apps to doze
+* `android.permission.ACCESS_NETWORK_STATE`: used to detect hotspot state to not disable wifi/data if hostpot is enabled
+* `android.permission.READ_PHONE_STATE`: to check if mobile data need to be disabled on Doze if configured
+* `android.permission.ACCESS_WIFI_STATE`: to check if WiFi needs to be disabled on Doze if configured
+* `android.permission.CHANGE_WIFI_STATE`: to disable WiFi on Doze if configured
+
 [//]: # (# Download )
 
 [//]: # (Play Store link: https://play.google.com/store/apps/details?id=com.akylas.enforcedoze&hl=en)
