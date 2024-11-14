@@ -1,17 +1,56 @@
 name: Release Upload
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        type: choice
+        default: patch
+        description: What kind of version upgrade
+        options: 
+        - none
+        - code
+        - patch
+        - minor
+        - major
+      publish:
+        description: "Should we publish?"
+        required: true
+        type: boolean
+        default: true
+      github:
+        description: "Should we publish on Github?"
+        default: true
+        required: true
+        type: boolean
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+          filter: tree:0
+          submodules: recursive
+      
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          actor: farfromrefug
+          name: Martin Guillon
+          email: dev@akylas.fr
+
+      - name: Git config
+        run: |
+          git config pull.rebase false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3' # Not needed with a `.ruby-version` or `.tool-versions`
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -20,33 +59,101 @@ jobs:
           java-version: 21
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
-          validate-wrappers: true
-          gradle-home-cache-cleanup: true
+          gradle-version: "8.9" # Quotes required to prevent YAML converting to number
 
-      - name: Set up signing key
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2.3.0
+        with:
+          mode: ci
+          load-mode: strict
+
+      
+      - name: Generate flavor ci file name
+        id: define_flavor_ci_string
         run: |
-          if [ ! -z "${{ secrets.KEY_STORE }}" ]; then
-            echo ${{ secrets.KEY_STORE }} | base64 --decode > ./keystore.jks
-          fi
-
-      - name: Build APK
-        run: ./gradlew assembleRelease -PuseExternalSigning
-        env:
-          RELEASE_KEYSTORE: ../keystore.jks
-          RELEASE_KEYSTORE_PASSWORD: '${{ secrets.KEY_STORE_PASSWORD }}'
-          RELEASE_KEYSTORE_ALIAS: '${{ secrets.KEY_ALIAS }}'
-          RELEASE_KEY_PASSWORD: '${{ secrets.KEY_PASSWORD }}'
+          echo "FLAVOR_CI_FILENAME=.env.ci.${{ inputs.flavor }}" >> $GITHUB_ENV
+          echo "FLAVOR_CI_MODE=ci.${{ inputs.flavor }}" >> $GITHUB_ENV
 
 
-      - name: echo
-        run: ls -la app/build/outputs/apk/release
-
-      - name: Upload to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Load flavor .env file
+        uses: xom9ikk/dotenv@v2.3.0
+        if: ${{ hashFiles(env.FLAVOR_CI_FILENAME) != '' }}
         with:
-          file: app/build/outputs/apk/release/*.apk
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          overwrite: true
-          file_glob: true
+          mode: ${{ env.FLAVOR_CI_MODE }}
+          load-mode: strict
+
+      - name: get current version
+        run: | 
+          echo "CURRENT_VERSION=$(bundle exec fastlane run android_get_version_name | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
+      - name: get current version
+        run: | 
+          echo "CURRENT_VERSION_CODE=$(bundle exec fastlane run android_get_version_code | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
+
+      - name: Bump release version
+        id: bump_version
+        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
+        uses: christian-draeger/increment-semantic-version@1.1.0
+        with:
+          current-version: env.CURRENT_VERSION
+          version-fragment: 'feature'
+
+      - name: update Version
+        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
+        run: |
+          echo "change version to ${{ github.event.inputs.release_type }}"
+          echo "NEW_VERSION=${{ steps.bump_version.outputs.next-version }}"  > $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$($CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
+          echo "VERSION_STR=$NEW_VERSION.$NEW_VERSION_CODE"  > $GITHUB_ENV
+
+      - name: update Version
+        if: github.event.inputs.release_type == 'code'
+        run: |
+          echo "change version to ${{ github.event.inputs.release_type }}"
+          echo "NEW_VERSION=${{ env.CURRENT_VERSION }}"  > $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$($CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
+          echo "VERSION_STR=$NEW_VERSION.$NEW_VERSION_CODE"  > $GITHUB_ENV
+
+      - name: Bump version
+        uses: Swisyn/android-version-generator-actions@v1.5
+        if: github.event.inputs.release_type != 'none'
+        with:
+          gradlePath: app/build.gradle # or app/build.gradle.kts 
+          versionCode: ${{env.NEW_VERSION_CODE}}
+          versionName: ${{env.NEW_VERSION}}
+
+      - name: Run shell prepare script
+        if: ${{ hashFiles('scripts/ci.prepare.sh') != '' }}
+        run: |
+          sh scripts/ci.prepare.sh --platform android --flavor "${{ github.event.inputs.flavor }}" --version "${{ env.VERSION_STR }}"
+
+      - name: Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
+        run: |
+          mkdir -p "$(dirname "$KEYSTORE_PATH")"
+          echo $KEYSTORE_BASE64 | base64 -d > $KEYSTORE_PATH
+
+      - name: publish beta
+        if: github.event.inputs.publish == 'true'
+        run: |
+          bundle exec fastlane android beta create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:false
+      
+      - name: publish github
+        if: github.event.inputs.github == 'true'
+        run: |
+          bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true
+            
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.VERSION_STR }}
+          path: |
+            dist/app-release.apk
+          retention-days: 7
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
