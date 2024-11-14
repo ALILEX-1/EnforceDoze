@@ -113,14 +113,14 @@ jobs:
         if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
-          echo "NEW_VERSION=${{ steps.bump_version.outputs.new_sem_ver }}" > $GITHUB_ENV
+          echo "NEW_VERSION='${{ steps.bump_version.outputs.new_sem_ver }}'" > $GITHUB_ENV
           echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
 
       - name: update Version
         if: github.event.inputs.release_type == 'code'
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
-          echo "NEW_VERSION=${{ env.CURRENT_VERSION }}"  > $GITHUB_ENV
+          echo "NEW_VERSION='${{ env.CURRENT_VERSION }}'"  > $GITHUB_ENV
           echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
 
       - name: update Version Str
