@@ -149,14 +149,18 @@ jobs:
           echo $KEYSTORE_BASE64 | base64 -d > $KEYSTORE_PATH
 
       # - name: publish beta
-        # if: github.event.inputs.publish == 'true'
-        # run: |
-          # bundle exec fastlane android beta create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:false
+      #   if: github.event.inputs.publish == 'true'
+      #   run: |
+      #     bundle exec fastlane android beta create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:false
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: publish github
         if: github.event.inputs.github == 'true'
         run: |
           bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
       - uses: actions/upload-artifact@v4
         with:
