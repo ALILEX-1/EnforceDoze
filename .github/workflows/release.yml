@@ -104,7 +104,7 @@ jobs:
       - name: Bump release version
         id: bump_version
         if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
-        uses: boromir674/action-semver-bumper@v1.0.
+        uses: boromir674/action-semver-bumper@v1.0.0
         with:
           sem_ver: ${{ env.CURRENT_VERSION }}
           bump_operator: ${{ steps.release_type_string.outputs.uppercase }}
