@@ -170,8 +170,11 @@ public class Utils {
     }
 
     public static boolean isUserInCall(Context context) {
-        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        return manager.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK || manager.getCallState() == TelephonyManager.CALL_STATE_RINGING;
+        if (Utils.isReadPhoneStatePermissionGranted(context)) {
+            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            return manager.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK || manager.getCallState() == TelephonyManager.CALL_STATE_RINGING;
+        }
+        return false;
     }
 
     public static boolean isMobileDataEnabled(Context context) {

@@ -132,11 +132,14 @@ public class SettingsActivity extends AppCompatActivity {
                 builder.show();
                 return true;
             });
-            showPersistentNotif.setOnPreferenceClickListener(preference -> {
-                if (!Utils.isPostNotificationPermissionGranted(getActivity())) {
-                    requestNotificationPermission();
-                    return false;
-                } else return true;
+            showPersistentNotif.setOnPreferenceChangeListener((preference, value) -> {
+                if ((boolean)value) {
+                    if (!Utils.isPostNotificationPermissionGranted(getActivity())) {
+                        requestNotificationPermission();
+                        return false;
+                    }
+                }
+                return true;
             });
 
             dozeDelay.setOnPreferenceChangeListener((preference, o) -> {

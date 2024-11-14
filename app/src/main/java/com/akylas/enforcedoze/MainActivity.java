@@ -2,6 +2,7 @@ package com.akylas.enforcedoze;
 
 import static com.akylas.enforcedoze.Utils.logToLogcat;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -11,11 +12,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.service.quicksettings.TileService;
 
@@ -24,6 +28,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -93,6 +99,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         LocalBroadcastManager.getInstance(this).registerReceiver(updateStateFromTile, new IntentFilter("update-state-from-tile"));
 
         toggleForceDozeSwitch.setOnCheckedChangeListener(null);
+
+        if (!Utils.isPostNotificationPermissionGranted(this)) {
+            requestNotificationPermission();
+        } else if (!Utils.isReadPhoneStatePermissionGranted(this)) {
+            requestReadPhoneStatePermission();
+        }
 
         if (serviceEnabled) {
             textViewStatus.setText(R.string.service_active);
@@ -249,6 +261,63 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         .show();
             }
         }
+    }
+
+    final int POST_NOTIF_PERMISSION_REQUEST_CODE =112;
+    final int READ_PHONE_STATE_PERMISSION_REQUEST_CODE =113;
+    public void requestNotificationPermission(){
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{"android.permission.POST_NOTIFICATIONS"},
+                        POST_NOTIF_PERMISSION_REQUEST_CODE);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void requestReadPhoneStatePermission(){
+        try {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    READ_PHONE_STATE_PERMISSION_REQUEST_CODE);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case POST_NOTIF_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                }  else {
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .edit()
+                            .putBoolean("showPersistentNotif", false)
+                            .apply();
+                }
+                if (!Utils.isReadPhoneStatePermissionGranted(this)) {
+                    requestReadPhoneStatePermission();
+                }
+                break;
+
+            case READ_PHONE_STATE_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                }  else {
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .edit()
+                            .putBoolean("showPersistentNotif", false)
+                            .apply();
+                }
+                break;
+
+        }
+
     }
 
     @Override
