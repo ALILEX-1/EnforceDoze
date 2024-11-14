@@ -134,10 +134,10 @@ lane :build_flavor do |params|
     git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
   end
 
+  tag = "#{tag_prefix}#{platform}/#{flavor}/#{version}/#{versionCode}";
+  changelog = get_changelog(platform:platform, flavor:flavor)
 
   if (options[:publish] != false)
-    tag = "#{tag_prefix}#{platform}/#{flavor}/#{version}/#{versionCode}";
-    changelog = get_changelog(platform:platform, flavor:flavor)
     if (flavor != 'github' && platform == 'android')
       write_changelog(version:versionCode, changelog: flavor != 'github' ? changelog : get_changelog(platform:platform, flavor:'store'));
     end

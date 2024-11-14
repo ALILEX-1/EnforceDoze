@@ -160,7 +160,7 @@ jobs:
             
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.VERSION_STR }}
+          name:  ${{ env.APP_ID }}.${{ env.VERSION_STR }}
           path: |
             dist/app-release.apk
           retention-days: 7
