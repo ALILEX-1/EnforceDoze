@@ -142,12 +142,20 @@ public class NumberPickerPreference extends Preference implements
             mPicker = (NumberPicker) view.findViewById(R.id.number_picker);
             if (mStep > 1) {
                 mValues = new String[(mMax - mMin) / mStep + 1];
+                int selectedIndex = 0;
                 for (int i = 0; i < mValues.length; i++) {
-                    mValues[i] = Integer.toString(mMin + mStep * i);
+                    int value = mMin + mStep * i;
+                    if (value == mCurrentValue) {
+                        selectedIndex = i;
+                    }
+                    mValues[i] = Integer.toString(value);
+
                 }
                 mPicker.setMinValue(0);
                 mPicker.setMaxValue((mMax - mMin) / mStep);
+
                 mPicker.setDisplayedValues(mValues);
+                mPicker.setValue(selectedIndex);
             } else {
                 mPicker.setMaxValue(mMax);
                 mPicker.setMinValue(mMin);
