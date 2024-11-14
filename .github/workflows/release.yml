@@ -108,7 +108,7 @@ jobs:
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
           echo "NEW_VERSION=${{ steps.bump_version.outputs.next-version }}" > $GITHUB_ENV
-          echo "NEW_VERSION_CODE=$($CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
           echo "VERSION_STR=$NEW_VERSION.$NEW_VERSION_CODE"  > $GITHUB_ENV
 
       - name: update Version
@@ -116,7 +116,7 @@ jobs:
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
           echo "NEW_VERSION=${{ env.CURRENT_VERSION }}"  > $GITHUB_ENV
-          echo "NEW_VERSION_CODE=$(CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
           echo "VERSION_STR=$NEW_VERSION.$NEW_VERSION_CODE"  > $GITHUB_ENV
 
       - name: Bump version
