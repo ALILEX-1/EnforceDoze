@@ -10,3 +10,6 @@
 *.keystore
 *.jks
 app/release
+/.env
+/vendor
+/certs
