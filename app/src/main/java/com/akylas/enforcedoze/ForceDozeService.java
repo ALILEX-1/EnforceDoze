@@ -370,7 +370,7 @@ public class ForceDozeService extends Service {
                 if (dozeAppBlocklist.size() != 0) {
                     log("Disabling apps that are in the Doze app blocklist");
                     for (String pkg : dozeAppBlocklist) {
-                        setPackageState(pkg, false);
+                        setPackageState(context, pkg, false);
                     }
                 }
 
@@ -462,7 +462,7 @@ public class ForceDozeService extends Service {
         if (dozeAppBlocklist.size() != 0) {
             log("Re-enabling apps that are in the Doze app blocklist");
             for (String pkg : dozeAppBlocklist) {
-                setPackageState(pkg, true);
+                setPackageState(getApplicationContext(), pkg, true);
             }
         }
 
@@ -752,9 +752,13 @@ public class ForceDozeService extends Service {
         }
     }
 
-    public void setPackageState(String packageName, boolean enabled) {
+    public void setPackageState(Context context, String packageName, boolean enabled) {
         log((enabled ? "Enabling " : "Disabling ") + packageName);
-        executeCommandWithRoot("pm " + (enabled ? "enable " : "disable ") + packageName);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            executeCommandWithRoot("pm " + (enabled ? "unsuspend " : "suspend ") + packageName);
+        } else {
+            executeCommandWithRoot("pm " + (enabled ? "enable " : "disable ") + packageName);
+        }
     }
 
     public String getDeviceIdleState() {
