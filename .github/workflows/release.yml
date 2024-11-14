@@ -101,13 +101,13 @@ jobs:
         uses: christian-draeger/increment-semantic-version@1.1.0
         with:
           current-version: ${{ env.CURRENT_VERSION }}
-          version-fragment: 'feature'
+          version-fragment: ${{ github.event.inputs.release_type }}
 
       - name: update Version
         if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
-          echo "NEW_VERSION=${{ steps.bump_version.outputs.next-version }}"  > $GITHUB_ENV
+          echo "NEW_VERSION=${{ steps.bump_version.outputs.next-version }}" > $GITHUB_ENV
           echo "NEW_VERSION_CODE=$($CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
           echo "VERSION_STR=$NEW_VERSION.$NEW_VERSION_CODE"  > $GITHUB_ENV
 
@@ -116,7 +116,7 @@ jobs:
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
           echo "NEW_VERSION=${{ env.CURRENT_VERSION }}"  > $GITHUB_ENV
-          echo "NEW_VERSION_CODE=$($CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$(CURRENT_VERSION_CODE+1))"  > $GITHUB_ENV
           echo "VERSION_STR=$NEW_VERSION.$NEW_VERSION_CODE"  > $GITHUB_ENV
 
       - name: Bump version
