@@ -36,6 +36,7 @@ android {
 
     buildTypes {
         release {
+            vcsInfo.include false
             if (useExternalSigning) {
                 signingConfig signingConfigs.release
             }
