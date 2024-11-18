@@ -127,6 +127,13 @@ lane :build_flavor do |params|
     push_to_git_remote(tags:false)
   end
 
+  if (options[:create_tag] != false)
+    if !git_tag_exists(tag: tag)
+      add_git_tag(tag: tag, force: true)
+      # push_git_tags(force: true)
+    end
+  end
+
   # commit version changes
   if (ENV["GITHUB_ACTIONS"] == 'true')
     # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
@@ -172,16 +179,10 @@ lane :build_flavor do |params|
       when 'alpha','beta','production'
         upload_store(changelog:changelog, version: version, versionCode: versionCode, flavor:flavor, options:options, build_output:build_output)
     end
-    if (options[:create_tag] != false)
-      if !git_tag_exists(tag: tag)
-        add_git_tag(tag: tag, force: true)
-        push_git_tags(force: true)
-      end
-    end
     # we need to pull to be able to push again
     git_pull
     # push any change
-    push_to_git_remote(tags:false)
+    push_to_git_remote(tags:falstrue)
   end
 end
 
