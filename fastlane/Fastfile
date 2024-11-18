@@ -95,7 +95,6 @@ lane :build_flavor do |params|
 
   repository_name = ENV['REPOSITORY'].match(/([^\/]+\/[^\/]+)(\.git)?$/)[1]
   dist_path = File.expand_path(File.join(project_root_path, 'dist'))
-  tag = "#{tag_prefix}#{version}/#{versionCode}";
   puts "working directory:"  + Dir.getwd
   puts "dist_path:"  + dist_path
   puts "platform:"  + platform
@@ -103,7 +102,6 @@ lane :build_flavor do |params|
   puts "flavor:"  + flavor
   puts "version:"  + version
   puts "versionCode:"  + versionCode
-  puts "tag:"  + tag
   puts "options:"  + JSON.generate(options.to_json)
 
   # if (options[:sentry])
@@ -129,13 +127,6 @@ lane :build_flavor do |params|
     push_to_git_remote(tags:false)
   end
 
-  if (options[:create_tag] != false)
-    if !git_tag_exists(tag: tag)
-      add_git_tag(tag: tag, force: true)
-      # push_git_tags(force: true)
-    end
-  end
-
   # commit version changes
   if (ENV["GITHUB_ACTIONS"] == 'true')
     # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
@@ -143,6 +134,7 @@ lane :build_flavor do |params|
     git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
   end
 
+  tag = "#{tag_prefix}#{version}/#{versionCode}";
   changelog = get_changelog(platform:platform, flavor:flavor)
 
   if (options[:publish] != false)
@@ -180,10 +172,16 @@ lane :build_flavor do |params|
       when 'alpha','beta','production'
         upload_store(changelog:changelog, version: version, versionCode: versionCode, flavor:flavor, options:options, build_output:build_output)
     end
+    if (options[:create_tag] != false)
+      if !git_tag_exists(tag: tag)
+        add_git_tag(tag: tag, force: true)
+        push_git_tags(force: true)
+      end
+    end
     # we need to pull to be able to push again
     git_pull
     # push any change
-    push_to_git_remote(tags:falstrue)
+    push_to_git_remote(tags:false)
   end
 end
 
