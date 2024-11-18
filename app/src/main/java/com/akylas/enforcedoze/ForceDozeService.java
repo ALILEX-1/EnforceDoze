@@ -1,12 +1,15 @@
 package com.akylas.enforcedoze;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,13 +37,20 @@ import android.util.Log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -55,6 +65,7 @@ public class ForceDozeService extends Service {
 
     private static Shell.Interactive rootSession;
     private static Shell.Interactive nonRootSession;
+    private static Shell.OnCommandResultListener2 onCommandResultListener2;
     boolean isSuAvailable = false;
     boolean disableWhenCharging = true;
     boolean disableMotionSensors = true;
@@ -69,6 +80,7 @@ public class ForceDozeService extends Service {
     boolean ignoreIfHotspot = false;
     boolean turnOffDataInDoze = false;
     boolean whitelistMusicAppNetwork = false;
+    boolean whitelistCurrentApp = false;
     boolean wasBatterSaverOn = false;
     boolean wasWiFiTurnedOn = false;
     boolean wasMobileDataTurnedOn = false;
@@ -165,6 +177,7 @@ public class ForceDozeService extends Service {
         turnOffBiometricsInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffBiometricsInDoze", false);
         turnOnBatterySaverInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnBatterySaverInDoze", false);
         whitelistMusicAppNetwork = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistMusicAppNetwork", false);
+        whitelistCurrentApp = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistCurrentApp", false);
         ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", true);
         useNonRootSensorWorkaround = getDefaultSharedPreferences(getApplicationContext()).getBoolean("useNonRootSensorWorkaround", false);
         dozeEnterDelay = getDefaultSharedPreferences(getApplicationContext()).getInt("dozeEnterDelay", 0);
@@ -266,6 +279,8 @@ public class ForceDozeService extends Service {
         log("turnOnBatterySaverInDoze: " + turnOnBatterySaverInDoze);
         whitelistMusicAppNetwork = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistMusicAppNetwork", false);
         log("whitelistMusicAppNetwork: " + whitelistMusicAppNetwork);
+        whitelistCurrentApp = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistCurrentApp", false);
+        log("whitelistCurrentApp: " + whitelistCurrentApp);
         ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", false);
         log("ignoreLockscreenTimeout: " + ignoreLockscreenTimeout);
         dozeEnterDelay = getDefaultSharedPreferences(getApplicationContext()).getInt("dozeEnterDelay", 0);
@@ -371,12 +386,39 @@ public class ForceDozeService extends Service {
                         tempWakeLock.release();
                     }
                 }
-
                 if (dozeAppBlocklist.size() != 0) {
                     log("Disabling apps that are in the Doze app blocklist");
-                    for (String pkg : dozeAppBlocklist) {
-                        setPackageState(context, pkg, false);
+                    if (whitelistCurrentApp) {
+                        // when root is not available we use UsageStatsManager
+                        // but i am not sure i can trust it as it does not really returns the front
+                        // app but last one used (what about apps running in the background?)
+                        if (isSuAvailable) {
+                            try {
+                                getFocusedApps((HashSet<String> packageNames)->{
+                                    for (String pkg : dozeAppBlocklist) {
+                                        if (!packageNames.contains(pkg)) {
+                                            setPackageState(context, pkg, false);
+                                        }
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            String currentlyFocused = getNonRootFocusedPackageName();
+                            for (String pkg : dozeAppBlocklist) {
+                                if (!pkg.equals(currentlyFocused)) {
+                                    setPackageState(context, pkg, false);
+                                }
+                            }
+                        }
+                    } else {
+
+                        for (String pkg : dozeAppBlocklist) {
+                            setPackageState(context, pkg, false);
+                        }
                     }
+
                 }
 
                 if (dozeNotificationBlocklist.size() != 0) {
@@ -546,6 +588,46 @@ public class ForceDozeService extends Service {
                             }
                         });
             }
+        });
+    }
+    public interface OnGetFocusedApp {
+        void onGetFocusedApps(HashSet<String> result);
+    }
+    public HashSet<String> parseFocusedApps(String services) {
+        if (!services.isEmpty()) {
+            return new HashSet<String>(Arrays.asList(services.split("\\r?\\n")));
+        }
+        return new HashSet<String>();
+    }
+    public String getNonRootFocusedPackageName() {
+        var usm = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
+        long time = System.currentTimeMillis();
+        List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,  time - 10000, time);
+        if (appList != null && !appList.isEmpty()) {
+            SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
+            for (UsageStats usageStats : appList) {
+                mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+            }
+            if (!mySortedMap.isEmpty()) {
+                return Objects.requireNonNull(mySortedMap.get(mySortedMap.lastKey())).getPackageName();
+            }
+        }
+        return null;
+    }
+
+    String FOCUSED_APP_REGEXP = "\\{[a-z0-9]+\\s[a-z0-9]+\\s(.*)\\/";
+    public void getFocusedApps(OnGetFocusedApp callback) {
+        executeCommandWithRoot("dumpsys activity activities | grep -E 'CurrentFocus|ResumedActivity|FocusedApp'", (commandCode, exitCode, STDOUT, STDERR) -> {
+            String result = "";
+            if (commandCode == 0) {
+                if (!STDOUT.isEmpty()) {
+                    Matcher m = Pattern.compile(FOCUSED_APP_REGEXP).matcher(STDOUT.get(0));
+                    if (m.find()) {
+                        result = m.group(1);
+                    }
+                }
+            }
+            callback.onGetFocusedApps(parseFocusedApps(result));
         });
     }
     public void executeCommandWithRoot(final String command ) {

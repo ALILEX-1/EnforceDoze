@@ -52,6 +52,11 @@
             android:summary="@string/whitelist_music_app_network_setting_summary"
             android:title="@string/whitelist_music_app_network_setting_title" />
         <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="whitelistCurrentApp"
+            android:summary="@string/ignore_current_app_setting_summary"
+            android:title="@string/ignore_current_app_setting_title" />
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="disableMotionSensors"
             android:summary="@string/disable_motion_sensors_setting_summary"

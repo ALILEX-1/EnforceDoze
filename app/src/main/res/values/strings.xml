@@ -155,6 +155,9 @@
     <string name="notification_channel_stats_name">Doze Stats</string>
     <string name="notification_channel_stats_description">Doze Battery stats</string>
 
+    <string name="ignore_current_app_setting_title">Whitelist Current app</string>
+    <string name="ignore_current_app_setting_summary">Currently focused app will be whitelisted even if in block list</string>
+
     <string name="notification_channel_tips_name">Informations</string>
     <string name="notification_channel_tips_description">Informations about compatibility problems</string>
 
@@ -167,4 +170,8 @@
     <string name="disable_stats_setting_title">Disable statistics</string>
     <string name="disable_logcat_setting_summary">Prevent ForceDoze from logging to system logcat</string>
     <string name="disable_logcat_setting_title">Disable Logcat</string>
+
+    <string name="usage_access_permission">App Usage Access</string>
+    <string name="usage_access_explanation">To query current focused app, the app needs "Usage Access" permission. You need to enable it by opening "Usage Access" settings</string>
+    <string name="open_button_text">Open</string>
 </resources>

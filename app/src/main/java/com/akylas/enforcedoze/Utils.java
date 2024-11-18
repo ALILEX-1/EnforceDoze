@@ -2,6 +2,7 @@ package com.akylas.enforcedoze;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -69,6 +70,20 @@ public class Utils {
         else return false;
     }
 
+    public static boolean isUsageStatsPermissionGranted(Context context) {
+        boolean granted = false;
+        AppOpsManager appOps = (AppOpsManager) context
+                .getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), context.getPackageName());
+
+        if (mode == AppOpsManager.MODE_DEFAULT) {
+            granted = (context.checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            granted = (mode == AppOpsManager.MODE_ALLOWED);
+        }
+        return granted;
+    }
     public static boolean isReadLogsPermissionGranted(Context context) {
         if (context.checkCallingOrSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED)
             return true;

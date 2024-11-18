@@ -115,6 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
             final Preference disableMotionSensors = (Preference) findPreference("disableMotionSensors");
             Preference turnOffDataInDoze = (Preference) findPreference("turnOffDataInDoze");
             Preference whitelistMusicAppNetwork = (Preference) findPreference("whitelistMusicAppNetwork");
+            Preference whitelistCurrentApp = (Preference) findPreference("whitelistCurrentApp");
             final Preference autoRotateBrightnessFix = (Preference) findPreference("autoRotateAndBrightnessFix");
             CheckBoxPreference autoRotateFixPref = (CheckBoxPreference) findPreference("autoRotateAndBrightnessFix");
 
@@ -252,7 +253,7 @@ public class SettingsActivity extends AppCompatActivity {
                         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
                         builder.setTitle(getString(R.string.notifications_permission));
                         builder.setMessage(getString(R.string.notifications_permission_explanation));
-                        builder.setPositiveButton(getString(R.string.okay_button_text), (dialogInterface, i) -> {
+                        builder.setPositiveButton(getString(R.string.open_button_text), (dialogInterface, i) -> {
                             Intent settingsIntent = null;
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                                 settingsIntent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
@@ -260,6 +261,24 @@ public class SettingsActivity extends AppCompatActivity {
                                         .putExtra(Settings.EXTRA_APP_PACKAGE, getActivity().getPackageName());
                             }
                             getActivity().startActivity(settingsIntent);
+                            dialogInterface.dismiss();
+                        });
+                        builder.show();
+                    }
+                }
+                return true;
+            });
+
+            whitelistCurrentApp.setOnPreferenceChangeListener((preference, o) -> {
+                final boolean newValue = (boolean) o;
+                if (newValue) {
+                    // we need to check if we have notifications permissions
+                    if (!isSuAvailable && !Utils.isUsageStatsPermissionGranted(getContext())) {
+                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
+                        builder.setTitle(getString(R.string.usage_access_permission));
+                        builder.setMessage(getString(R.string.usage_access_explanation));
+                        builder.setPositiveButton(getString(R.string.open_button_text), (dialogInterface, i) -> {
+                            getActivity().startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
                             dialogInterface.dismiss();
                         });
                         builder.show();
