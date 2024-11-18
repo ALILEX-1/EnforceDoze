@@ -64,10 +64,12 @@ public class ForceDozeService extends Service {
     boolean useNonRootSensorWorkaround = false;
     boolean turnOffAllSensorsInDoze = false;
     boolean turnOffBiometricsInDoze = false;
+    boolean turnOnBatterySaverInDoze = false;
     boolean turnOffWiFiInDoze = false;
     boolean ignoreIfHotspot = false;
     boolean turnOffDataInDoze = false;
     boolean whitelistMusicAppNetwork = false;
+    boolean wasBatterSaverOn = false;
     boolean wasWiFiTurnedOn = false;
     boolean wasMobileDataTurnedOn = false;
     boolean wasHotSpotTurnedOn = false;
@@ -161,6 +163,7 @@ public class ForceDozeService extends Service {
         turnOffWiFiInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffWiFiInDoze", false);
         turnOffAllSensorsInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffAllSensorsInDoze", false);
         turnOffBiometricsInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffBiometricsInDoze", false);
+        turnOnBatterySaverInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnBatterySaverInDoze", false);
         whitelistMusicAppNetwork = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistMusicAppNetwork", false);
         ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", true);
         useNonRootSensorWorkaround = getDefaultSharedPreferences(getApplicationContext()).getBoolean("useNonRootSensorWorkaround", false);
@@ -259,6 +262,8 @@ public class ForceDozeService extends Service {
         log("turnOffAllSensorsInDoze: " + turnOffAllSensorsInDoze);
         turnOffBiometricsInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffBiometricsInDoze", false);
         log("turnOffBiometricsInDoze: " + turnOffBiometricsInDoze);
+        turnOnBatterySaverInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnBatterySaverInDoze", false);
+        log("turnOnBatterySaverInDoze: " + turnOnBatterySaverInDoze);
         whitelistMusicAppNetwork = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistMusicAppNetwork", false);
         log("whitelistMusicAppNetwork: " + whitelistMusicAppNetwork);
         ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", false);
@@ -902,6 +907,16 @@ public class ForceDozeService extends Service {
         executeCommandWithRoot("settings put secure biometric_keyguard_enabled " +(enabled? 1:0));
     }
 
+    public void setBatterSaverState(Context context, boolean enabled) {
+        if (!isSuAvailable) {
+            return;
+        }
+//        if (!Utils.isSecureSettingsPermissionGranted(context)) {
+//            grantSecureSettingsPermission();
+//        }
+        executeCommandWithRoot("settings put global low_power " +(enabled? 1:0));
+    }
+
     public void enableWiFi() {
         if (isSuAvailable) {
             executeCommandWithRoot("svc wifi enable", (commandCode, exitCode, STDOUT, STDERR) -> {
@@ -960,6 +975,7 @@ public class ForceDozeService extends Service {
         wasWiFiTurnedOn = wasWiFiTurnedOn || Utils.isWiFiEnabled(context);
         wasMobileDataTurnedOn = wasMobileDataTurnedOn || Utils.isMobileDataEnabled(context) ;
         wasHotSpotTurnedOn = Utils.isHotspotEnabled(context);
+        wasBatterSaverOn = wasBatterSaverOn || Utils.isBatterSaverEnabled(getContentResolver());
 
         if (turnOffAllSensorsInDoze) {
             log("Disabling All sensors");
@@ -968,6 +984,10 @@ public class ForceDozeService extends Service {
         if (turnOffBiometricsInDoze) {
             log("Disabling Biometrics");
             setBiometricsSensorState(context, false);
+        }
+        if (turnOnBatterySaverInDoze) {
+            log("Enabling Battery Saver");
+            setBatterSaverState(context, true);
         }
 
         if (turnOffWiFiInDoze && (!ignoreIfHotspot || !wasHotSpotTurnedOn) && wasWiFiTurnedOn && packageName == null) {
@@ -1015,6 +1035,10 @@ public class ForceDozeService extends Service {
             log("Enabling biometrics");
             setBiometricsSensorState(context, true);
         }
+        if (turnOnBatterySaverInDoze) {
+            log("Disabling battery saver");
+            setBatterSaverState(context, false);
+        }
 
         if (turnOffDataInDoze) {
             log("wasDataTurnedOn: " + wasMobileDataTurnedOn);
@@ -1024,6 +1048,7 @@ public class ForceDozeService extends Service {
             }
         }
         wasWiFiTurnedOn = false;
+        wasBatterSaverOn = false;
         wasMobileDataTurnedOn = false;
     }
 

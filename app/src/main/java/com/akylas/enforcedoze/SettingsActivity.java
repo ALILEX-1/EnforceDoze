@@ -378,6 +378,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Preference dozeNotificationBlocklist = (Preference) findPreference("blacklistAppNotifications");
                     Preference dozeAppBlocklist = (Preference) findPreference("blacklistApps");
                     Preference turnOffAllSensorsInDoze = (Preference) findPreference("turnOffAllSensorsInDoze");
+                    Preference turnOnBatterySaverInDoze = (Preference) findPreference("turnOnBatterySaverInDoze");
                     Preference turnOffBiometricsInDoze = (Preference) findPreference("turnOffBiometricsInDoze");
                     if (enabled) {
                         turnOffDataInDoze.setEnabled(true);
@@ -388,6 +389,8 @@ public class SettingsActivity extends AppCompatActivity {
                         dozeAppBlocklist.setSummary(getString(R.string.app_blocklist_setting_summary));
                         turnOffAllSensorsInDoze.setEnabled(true);
                         turnOffAllSensorsInDoze.setSummary(getString(R.string.disable_all_sensors_setting_summary));
+                        turnOnBatterySaverInDoze.setEnabled(true);
+                        turnOnBatterySaverInDoze.setSummary(getString(R.string.enable_battery_saver_setting_summary));
                         turnOffBiometricsInDoze.setEnabled(true);
                         turnOffBiometricsInDoze.setSummary(getString(R.string.disable_biometrics_setting_summary));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -404,10 +407,13 @@ public class SettingsActivity extends AppCompatActivity {
                         dozeAppBlocklist.setSummary(getString(R.string.root_required_text));
                         turnOffAllSensorsInDoze.setEnabled(false);
                         turnOffAllSensorsInDoze.setSummary(getString(R.string.root_required_text));
+                        turnOnBatterySaverInDoze.setEnabled(false);
+                        turnOnBatterySaverInDoze.setSummary(getString(R.string.root_required_text));
                         turnOffBiometricsInDoze.setEnabled(false);
                         turnOffBiometricsInDoze.setSummary(getString(R.string.root_required_text));
                         PreferenceManager.getDefaultSharedPreferences(getContext())
                                 .edit()
+                                .putBoolean("turnOnBatterySaverInDoze", false)
                                 .putBoolean("turnOffAllSensorsInDoze", false)
                                 .putBoolean("turnOffBiometricsInDoze", false)
                                 .apply();

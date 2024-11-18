@@ -198,6 +198,10 @@ public class Utils {
         WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         return wifi.isWifiEnabled();
     }
+    public static boolean isBatterSaverEnabled(ContentResolver contentResolver) {
+        return Settings.Global.getInt(contentResolver, "low_power", 0) >= 1;
+
+    }
     public static boolean isHotspotEnabled(Context context) {
         WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         Method method = null;
