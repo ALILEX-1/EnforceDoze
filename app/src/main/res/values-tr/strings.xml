@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">EnforceDoze</string>
     <string name="service_active">EnforceDoze Hizmeti Aktif oldu</string>
@@ -82,7 +83,7 @@
     <string name="cleared_text">Temizlendi</string>
     <string name="doze_battery_stats_clear_msg">Doze pil istatistikleri başarıyla silindi!</string>
     <string name="reset_complete_dialog_title">Tamamlandı</string>
-    <string name="reset_complete_dialog_text">ForceDoze kendini sıfırladı. Aşağıdaki değişiklikler yapılmıştır:\n\n1) ForceDoze hizmetini durdurun\n2) Sensörleri devre dışı bırakın, yalnızca devre dışı bırakın\n3) Doze modunu devre dışı bırakın ve yeniden etkinleştirin, Doze modunun düzgün şekilde açılmasını sağlayın \ n4) Uygulama tercihlerini sıfırlayın\n5) DÖKME, WRITE_SECURE_SETTINGS, READ_PHONE_STATE, WRITE_SETTINGS, READ_LOGS (izin verilen) izinlerini iptal edin\n\nCihazınızı yeniden başlatmanız önerilir. Uygulama şimdi yeniden başlayacak!</string>
+    <string name="reset_complete_dialog_text">"ForceDoze kendini sıfırladı. Aşağıdaki değişiklikler yapılmıştır:\n\n1) ForceDoze hizmetini durdurun\n2) Sensörleri devre dışı bırakın, yalnızca devre dışı bırakın\n3) Doze modunu devre dışı bırakın ve yeniden etkinleştirin, Doze modunun düzgün şekilde açılmasını sağlayın  n4) Uygulama tercihlerini sıfırlayın\n5) DÖKME, WRITE_SECURE_SETTINGS, READ_PHONE_STATE, WRITE_SETTINGS, READ_LOGS (izin verilen) izinlerini iptal edin\n\nCihazınızı yeniden başlatmanız önerilir. Uygulama şimdi yeniden başlayacak!"</string>
     <string name="doze_delay_warning_dialog_title">Uyarı</string>
     <string name="doze_delay_warning_dialog_text">Doze Gecikme değeri şu anda çok yüksek ve pil ömrü üzerinde olumsuz bir etkisi olabilir. Gecikmenin pil ömrü üzerindeki etkilerini sınadığınızdan ve pil ömründe gözle görülür bir düşüş varsa gecikmeyi azaltmayı deneyin..</string>
     <string name="forcedoze_reset_initial_dialog_title">Sıfırlamak istiyor musun</string>
