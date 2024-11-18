@@ -95,6 +95,7 @@ lane :build_flavor do |params|
 
   repository_name = ENV['REPOSITORY'].match(/([^\/]+\/[^\/]+)(\.git)?$/)[1]
   dist_path = File.expand_path(File.join(project_root_path, 'dist'))
+  tag = "#{tag_prefix}#{version}/#{versionCode}";
   puts "working directory:"  + Dir.getwd
   puts "dist_path:"  + dist_path
   puts "platform:"  + platform
@@ -102,6 +103,7 @@ lane :build_flavor do |params|
   puts "flavor:"  + flavor
   puts "version:"  + version
   puts "versionCode:"  + versionCode
+  puts "tag:"  + tag
   puts "options:"  + JSON.generate(options.to_json)
 
   # if (options[:sentry])
@@ -141,7 +143,6 @@ lane :build_flavor do |params|
     git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
   end
 
-  tag = "#{tag_prefix}#{version}/#{versionCode}";
   changelog = get_changelog(platform:platform, flavor:flavor)
 
   if (options[:publish] != false)
