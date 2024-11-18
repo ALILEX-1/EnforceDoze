@@ -12,6 +12,16 @@ EnforceDoze allows you to forcefully enable Doze right after you turn off your s
 
 Or download the latest APK from the [Releases Section](https://github.com/farfromrefug/EnforceDoze/releases/latest).
 
+   
+<h2 align="center">Enjoying Enforcedoze?</h2>
+<p align="center">Please consider making a small donation to help fund the project. Developing an application, especially one that is open source and completely free, takes a lot of time and effort.
+<br>
+<br>
+<div align="center">
+<a href="https://github.com/sponsors/farfromrefug">:heart: Sponsor</a>
+</div>
+<hr>
+
 ## Coverage:
  * LifeHacker: https://lifehacker.com/how-to-squeeze-more-battery-out-of-your-phone-with-andr-1791336715
  
