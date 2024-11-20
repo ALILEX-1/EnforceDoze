@@ -219,6 +219,13 @@ public class ForceDozeService extends Service {
         } else {
             executeCommand("whoami");
         }
+        // ensure blocked apps are enable in case we were killed before we could enable them after doze
+        if (dozeAppBlocklist.size() != 0) {
+            log("Re-enabling apps that are in the Doze app blocklist");
+            for (String pkg : dozeAppBlocklist) {
+                setPackageState(getApplicationContext(), pkg, true);
+            }
+        }
     }
 
 
