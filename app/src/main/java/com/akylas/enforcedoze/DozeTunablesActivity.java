@@ -230,7 +230,7 @@ public class DozeTunablesActivity extends AppCompatActivity {
     }
 
     @SuppressLint("ValidFragment")
-    public  class DozeTunablesFragment extends PreferenceFragment {
+    public  static class DozeTunablesFragment extends PreferenceFragment {
 
         MaterialDialog grantPermProgDialog;
         boolean isSuAvailable = false;
@@ -275,7 +275,7 @@ public class DozeTunablesActivity extends AppCompatActivity {
                             if (!Utils.isSecureSettingsPermissionGranted(getActivity())) {
                                 executeCommand("pm grant com.akylas.enforcedoze android.permission.WRITE_SECURE_SETTINGS");
                             }
-                            loadTunables();
+                            ((DozeTunablesActivity)getActivity()).loadTunables();
                         } else {
                             log("SU permission denied or not available");
                             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
@@ -298,6 +298,7 @@ public class DozeTunablesActivity extends AppCompatActivity {
                 });
             } else {
                 suAvailable = true;
+                ((DozeTunablesActivity)getActivity()).loadTunables();
             }
         }
 
