@@ -35,7 +35,7 @@
     <string name="error_text">Грешка</string>
     <string name="please_wait_text">Изчакайте</string>
     <string name="read_logcat_su_not_avail_or_denied_error_text">Достъпът до правата на суперпотребителя е отказан или липсва и за това дневникът не може да бъде прочетен.\n\nЗа да използвате тази способност на приложението, разрешете READ_LOGS чрез ADB: „adb shell pm grant com.akylas.enforcedoze android.permission.READ_LOGS“ (без кавичките)</string>
-    <string name="whitelisted_apps_restrictions_text">"Приложенията в белия списък, могат да използват мрежата и да държат частипен WakeLock по време на Doze и App Standby. Но другите ограничения продължават да важат, както и за останалите приложения. Например задачите са отлижени, а обикновените му будилници от AlarmManager не се изпълняват. "</string>
+    <string name="whitelisted_apps_restrictions_text">"Приложенията в белия списък, могат да използват мрежата и да държат частичен WakeLock по време на Doze и App Standby. Но другите ограничения продължават да важат, както и за останалите приложения. Например задачите са отлижени, а обикновените му будилници от AlarmManager не се изпълняват. "</string>
     <string name="app_already_whitelisted_text">Приложението е вече в списъка!</string>
     <string name="force_doze_info">EnforceDoze включва режим Doze в момента, в който изгасите екрана. Също така изключва сензорите за движение, така че устройството да не излезе от този режим по случайност, освен ако не е време за изпълнение на задачи за поддръжка. Това увеличава живота на батериятя много повече от стандартния режим Doze.</string>
     <string name="disable_all_sensors_setting_summary">Изключване на всички сензори, когато устройството влезе в режим Doze (движение, камера…)</string>
