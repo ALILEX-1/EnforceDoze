@@ -9,13 +9,6 @@
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/action_remove_notification_blocklist"
-        android:orderInCategory="100"
-        android:title="@string/remove_menu_item"
-        app:iconTint="?attr/colorControlNormal"
-        android:icon="@drawable/ic_remove_white_24dp"
-        app:showAsAction="always"/>
-    <item
         android:id="@+id/action_add_notification_blocklist_package"
         android:orderInCategory="100"
         android:title="@string/add_package_menu_item"

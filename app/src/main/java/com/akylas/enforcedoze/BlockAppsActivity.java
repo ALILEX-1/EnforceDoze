@@ -10,6 +10,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -27,7 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public class BlockAppsActivity extends AppCompatActivity {
-    ListView listView;
+    RecyclerView recyclerView;
     SharedPreferences sharedPreferences;
     AppsAdapter blockDozeApps;
     ArrayList<String> blockedPackages;
@@ -49,12 +53,27 @@ public class BlockAppsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        listView = (ListView) findViewById(R.id.listViewAppBlockList);
+        recyclerView =  findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            public boolean onMove(RecyclerView recyclerView,
+                                  RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;// true if moved, false otherwise
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                verifyAndRemovePackage(listData.get(viewHolder.getLayoutPosition()).getAppPackageName());
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
         blockedPackages = new ArrayList<>();
         listData = new ArrayList<>();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         blockDozeApps = new AppsAdapter(this, listData);
-        listView.setAdapter(blockDozeApps);
+        recyclerView.setAdapter(blockDozeApps);
         loadPackagesFromBlockList();
         isSuAvailable = sharedPreferences.getBoolean("isSuAvailable", false);
     }
@@ -79,8 +98,6 @@ public class BlockAppsActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_add_app_doze_blocklist) {
             startActivityForResult(new Intent(BlockAppsActivity.this, PackageChooserActivity.class), 505);
-        } else if (id == R.id.action_remove_app_doze_blocklist) {
-            startActivityForResult(new Intent(BlockAppsActivity.this, PackageChooserActivity.class), 506);
         } else if (id == R.id.action_add_app_doze_blocklist_package) {
             showManuallyAddPackageDialog();
         } else if (id == R.id.action_remove_app_doze_blocklist_package) {

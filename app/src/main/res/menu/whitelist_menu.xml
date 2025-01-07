@@ -9,13 +9,6 @@
         app:iconTint="?attr/colorControlNormal"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/action_remove_whitelist"
-        android:orderInCategory="100"
-        android:title="@string/remove_menu_item"
-        android:icon="@drawable/ic_remove_white_24dp"
-        app:iconTint="?attr/colorControlNormal"
-        app:showAsAction="always"/>
-    <item
         android:id="@+id/action_add_whitelist_package"
         android:orderInCategory="100"
         android:title="@string/add_package_menu_item"

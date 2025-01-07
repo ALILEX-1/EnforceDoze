@@ -11,11 +11,14 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -30,7 +33,7 @@ import java.util.List;
 import eu.chainfire.libsuperuser.Shell;
 
 public class WhitelistAppsActivity extends AppCompatActivity {
-    ListView listView;
+    RecyclerView recyclerView;
     SharedPreferences sharedPreferences;
     AppsAdapter whitelistAppsAdapter;
     ArrayList<String> whitelistedPackages;
@@ -51,15 +54,31 @@ public class WhitelistAppsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        listView = (ListView) findViewById(R.id.listView2);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         whitelistedPackages = new ArrayList<>();
         listData = new ArrayList<>();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         whitelistAppsAdapter = new AppsAdapter(this, listData);
-        listView.setAdapter(whitelistAppsAdapter);
+        recyclerView.setAdapter(whitelistAppsAdapter);
         loadPackagesFromWhitelist();
         isSuAvailable = sharedPreferences.getBoolean("isSuAvailable", false);
         showDozeWhitelistWarning = sharedPreferences.getBoolean("showDozeWhitelistWarning", true);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            public boolean onMove(RecyclerView recyclerView,
+                                  RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;// true if moved, false otherwise
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                verifyAndRemovePackage(listData.get(viewHolder.getLayoutPosition()).getAppPackageName());
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         if (showDozeWhitelistWarning) {
             displayDialog(getString(R.string.whitelisting_text), getString(R.string.whitelisted_apps_restrictions_text));
@@ -80,8 +99,6 @@ public class WhitelistAppsActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_add_whitelist) {
             startActivityForResult(new Intent(WhitelistAppsActivity.this, PackageChooserActivity.class), 999);
-        } else if (id == R.id.action_remove_whitelist) {
-            startActivityForResult(new Intent(WhitelistAppsActivity.this, PackageChooserActivity.class), 998);
         } else if (id == R.id.action_add_whitelist_package) {
             showManuallyAddPackageDialog();
         } else if (id == R.id.action_remove_whitelist_package) {
@@ -159,8 +176,8 @@ public class WhitelistAppsActivity extends AppCompatActivity {
                         }
                         listData.add(appItem);
                     }
-                    whitelistAppsAdapter.notifyDataSetChanged();
                 }
+                whitelistAppsAdapter.notifyDataSetChanged();
 
                 log("Whitelisted packages: " + listData.size() + " packages in total");
             }
@@ -178,6 +195,7 @@ public class WhitelistAppsActivity extends AppCompatActivity {
                 .title(getString(R.string.whitelist_apps_setting_text))
                 .content(R.string.manually_add_package_dialog_text)
                 .inputType(InputType.TYPE_CLASS_TEXT)
+                .cancelable(true)
                 .input("com.spotify.music", "", false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
@@ -191,6 +209,7 @@ public class WhitelistAppsActivity extends AppCompatActivity {
                 .title(getString(R.string.whitelist_apps_setting_text))
                 .content(R.string.manually_remove_package_dialog_text)
                 .inputType(InputType.TYPE_CLASS_TEXT)
+                .cancelable(true)
                 .input("com.spotify.music", "", false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
