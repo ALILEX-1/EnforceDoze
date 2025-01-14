@@ -110,6 +110,12 @@ lane :build_flavor do |params|
   #     version: sentry_version
   #   )
   # end
+  # commit version changes
+  if (ENV["GITHUB_ACTIONS"] == 'true')
+    # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
+    git_add(path: ["./*.gradle"])
+    git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
+  end
 
   build_output = build(flavor: flavor, options: options)
   puts "build_output #{JSON.pretty_generate(build_output)}"
@@ -125,13 +131,6 @@ lane :build_flavor do |params|
   if (ENV["GITHUB_ACTIONS"] != 'true')
     # push anything standing
     push_to_git_remote(tags:false)
-  end
-
-  # commit version changes
-  if (ENV["GITHUB_ACTIONS"] == 'true')
-    # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
-    git_add(path: ["./*.gradle"])
-    git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
   end
 
   tag = "#{tag_prefix}#{version}/#{versionCode}";
