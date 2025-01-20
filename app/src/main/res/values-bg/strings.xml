@@ -166,4 +166,7 @@
     <string name="open_button_text">Отваряне</string>
     <string name="enable_battery_saver_setting_title">Пестене на батерия при гасене на екрана</string>
     <string name="enable_battery_saver_setting_summary">Включване на режима на пестене на батерия, докато устройството е в режим Doze</string>
+    <string name="licenses">лицензи</string>
+    <string name="translations">преводи</string>
+    <string name="privacy_policy">политика за поверителност</string>
 </resources>
