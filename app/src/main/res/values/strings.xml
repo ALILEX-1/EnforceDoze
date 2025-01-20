@@ -174,4 +174,7 @@
     <string name="usage_access_permission">App Usage Access</string>
     <string name="usage_access_explanation">To query current focused app, the app needs "Usage Access" permission. You need to enable it by opening "Usage Access" settings</string>
     <string name="open_button_text">Open</string>
+    <string name="licenses">licenses</string>
+    <string name="translations">translations</string>
+    <string name="privacy_policy">privacy policy</string>
 </resources>

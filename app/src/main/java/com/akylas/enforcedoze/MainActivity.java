@@ -33,6 +33,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         textViewStatus = (TextView) findViewById(R.id.textView2);
         updateStateFromTile = new UpdateForceDozeEnabledState();
         LocalBroadcastManager.getInstance(this).registerReceiver(updateStateFromTile, new IntentFilter("update-state-from-tile"));
-
+        ((TextView) findViewById(R.id.textView)).setMovementMethod(new ScrollingMovementMethod());
         toggleForceDozeSwitch.setOnCheckedChangeListener(null);
 
         if (!Utils.isPostNotificationPermissionGranted(this)) {

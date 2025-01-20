@@ -3,7 +3,6 @@
     android:id="@+id/rrl_about"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232937"
     android:fitsSystemWindows="true">
 
     <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,7 +13,6 @@
         tools:context=".HomeActivity">
 
         <RelativeLayout
-            android:paddingRight="100dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -22,15 +20,15 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginLeft="30dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
+                android:autoSizeMinTextSize="15dp"
                 android:fontFamily="sans-serif-light"
-                android:text="EnforceDoze for\nAndroid"
+                android:text="@string/app_name"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="36sp"
-                android:textColor="#ffffff" />
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -39,7 +37,7 @@
                 android:layout_alignLeft="@+id/textView2"
                 android:layout_alignStart="@+id/textView2"
                 android:layout_below="@+id/textView2"
-                android:layout_marginTop="38dp"
+                android:layout_marginTop="18dp"
                 android:text="Version"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#9BA0AA"
@@ -58,60 +56,56 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#586174" />
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView6"
-                android:layout_alignStart="@+id/textView6"
-                android:layout_below="@+id/textView6"
-                android:layout_marginTop="30dp"
-                android:text="licenses"
-                android:onClick="showLicences"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#9BA0AA"
-                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
+                android:layout_marginTop="21dp"
                 android:elegantTextHeight="false"
                 android:fontFamily="sans-seif-thin"
                 android:longClickable="false"
                 android:singleLine="false"
                 android:text="@string/about_app_opensrc_text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#9BA0AA"
+                android:textColor="#000000"
                 android:layout_below="@+id/textView4"
                 android:layout_alignStart="@+id/textView4" />
 
-            <TextView
-                android:id="@+id/textView7"
+            <Button
+                android:id="@+id/textView5"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="11dp"
-                android:text="translations"
+                android:layout_alignStart="@+id/textView6"
+                android:layout_below="@+id/textView6"
+                android:text="@string/licenses"
+                android:onClick="showLicences"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#9BA0AA" />
+            <Button
+                android:id="@+id/textView7"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/translations"
                 android:onClick="showTranslationCreditsDialog"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#9BA0AA"
-                android:textStyle="bold"
                 android:layout_below="@+id/textView5"
-                android:layout_alignStart="@+id/textView5" />
+                android:layout_alignStart="@+id/textView6" />
 
-            <TextView
+            <Button
                 android:id="@+id/textView9"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="11dp"
-                android:text="privacy policy"
+                android:text="@string/privacy_policy"
                 android:onClick="showPrivacyPolicy"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#9BA0AA"
-                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_below="@+id/textView7"
-                android:layout_alignStart="@+id/textView7" />
+                android:layout_alignStart="@+id/textView6" />
 
         </RelativeLayout>
 
