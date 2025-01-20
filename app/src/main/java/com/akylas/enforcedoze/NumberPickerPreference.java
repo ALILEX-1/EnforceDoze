@@ -7,13 +7,16 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.Preference;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
+
+import androidx.preference.Preference;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 /* Created by Faiz Visram on 2014-03-11 */
 
@@ -24,7 +27,7 @@ public class NumberPickerPreference extends Preference implements
     private final int DEFAULT_MIN = 0;
     private final int DEFAULT_STEP = 1;
 
-    AlertDialog mDialog;
+    MaterialDialog mDialog;
     NumberPicker mPicker;
     String mTitle;
     boolean mBindSummary = DEFAULT_BIND_SUMMARY;
@@ -132,7 +135,6 @@ public class NumberPickerPreference extends Preference implements
         return true;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showDialog() {
         if (mDialog == null) {
 
@@ -167,11 +169,11 @@ public class NumberPickerPreference extends Preference implements
             saveButton.setOnClickListener(this);
 
             // build dialog
-            mDialog = new AlertDialog.Builder(getContext())
-                    .setTitle(mTitle)
-                    .setView(view)
-                    .setCancelable(true)
-                    .create();
+            mDialog = new MaterialDialog.Builder(getContext())
+                    .title(mTitle)
+                    .customView(view, true)
+                    .cancelable(true)
+                    .build();
 
             mDialog.setCanceledOnTouchOutside(true);
         }
@@ -189,7 +191,6 @@ public class NumberPickerPreference extends Preference implements
         persistInt(value);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (AlertDialog.BUTTON_POSITIVE == which) {
@@ -206,7 +207,6 @@ public class NumberPickerPreference extends Preference implements
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onClick(View v) {
         save(getValue());

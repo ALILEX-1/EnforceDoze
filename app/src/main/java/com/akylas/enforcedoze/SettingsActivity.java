@@ -10,18 +10,21 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
+
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -53,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
     }
@@ -88,22 +91,46 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
 
         boolean isSuAvailable = false;
+
+
+        @Override
+        public void onDisplayPreferenceDialog(@NonNull androidx.preference.Preference preference) {
+            if (preference instanceof ListPreference) {
+                showListPreferenceDialog((ListPreference)preference);
+            } else {
+                super.onDisplayPreferenceDialog(preference);
+            }
+        }
+
+        private void showListPreferenceDialog(ListPreference preference) {
+            DialogFragment dialogFragment = new MaterialListPreference();
+            Bundle bundle = new Bundle(1);
+            bundle.putString("key", preference.getKey());
+            dialogFragment.setArguments(bundle);
+            dialogFragment.setTargetFragment(this, 0);
+            dialogFragment.show(getParentFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG");
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
+        }
+
+        @Override
+        public void onCreatePreferences(@Nullable Bundle savedInstanceState, String rootKey) {
 
             // Initialize root and non-root shell
             executeCommandWithRoot("whoami");
             executeCommandWithoutRoot("whoami");
 
             addPreferencesFromResource(R.xml.prefs);
-            PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("preferenceScreen");
-            PreferenceCategory mainSettings = (PreferenceCategory) findPreference("mainSettings");
-            PreferenceCategory dozeSettings = (PreferenceCategory) findPreference("dozeSettings");
+//            PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("preferenceScreen");
+//            PreferenceCategory mainSettings = (PreferenceCategory) findPreference("mainSettings");
+//            PreferenceCategory dozeSettings = (PreferenceCategory) findPreference("dozeSettings");
             Preference resetForceDozePref = (Preference) findPreference("resetForceDoze");
             Preference clearDozeStats = (Preference) findPreference("resetDozeStats");
             Preference dozeDelay = (Preference) findPreference("dozeEnterDelay");
@@ -117,7 +144,7 @@ public class SettingsActivity extends AppCompatActivity {
             Preference whitelistMusicAppNetwork = (Preference) findPreference("whitelistMusicAppNetwork");
             Preference whitelistCurrentApp = (Preference) findPreference("whitelistCurrentApp");
             final Preference autoRotateBrightnessFix = (Preference) findPreference("autoRotateAndBrightnessFix");
-            CheckBoxPreference autoRotateFixPref = (CheckBoxPreference) findPreference("autoRotateAndBrightnessFix");
+            SwitchPreferenceCompat autoRotateFixPref = (SwitchPreferenceCompat) findPreference("autoRotateAndBrightnessFix");
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
