@@ -7,7 +7,7 @@ EnforceDoze allows you to forcefully enable Doze right after you turn off your s
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.akylas.enforcedoze/)
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
-     alt="Get it on F-Droid"
+     alt="Get it on IzzyOnDroid"
      height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.akylas.enforcedoze)
 
 Or download the latest APK from the [Releases Section](https://github.com/farfromrefug/EnforceDoze/releases/latest).
