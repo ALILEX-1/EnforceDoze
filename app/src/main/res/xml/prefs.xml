@@ -20,6 +20,11 @@
             android:key="ignoreLockscreenTimeout"
             android:summary="@string/lockscreen_timeout_setting_summary"
             android:title="@string/lockscreen_timeout_setting_title" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="waitForUnlock"
+            android:summary="@string/wait_unlock_setting_summary"
+            android:title="@string/wait_unlock_setting_title" />
         <Preference
             android:key="whitelistAppsFromDozeMode"
             android:summary="@string/whitelist_apps_setting_summary"
@@ -41,6 +46,11 @@
             android:key="turnOffDataInDoze"
             android:summary="@string/disable_data_during_doze_setting_summary"
             android:title="@string/disable_data_during_doze_setting_title" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="turnOnAirplaneInDoze"
+            android:summary="@string/enable_airplane_setting_summary"
+            android:title="@string/enable_airplane_setting_title" />
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="ignoreIfHotspot"

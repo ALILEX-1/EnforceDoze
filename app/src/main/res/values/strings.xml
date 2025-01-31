@@ -43,6 +43,8 @@
     <string name="disable_all_sensors_setting_summary">Disable seall sensors when the device goes into Doze mode (motion, camera...)</string>
     <string name="enable_battery_saver_setting_title">Turn on Battery Saver on screen off</string>
     <string name="enable_battery_saver_setting_summary">Turn on Battery Saver while the device is in Doze mode</string>
+    <string name="enable_airplane_setting_title">Turn on Airplane on screen off</string>
+    <string name="enable_airplane_setting_summary">Turn on Airplane mode while the device is in Doze mode</string>
     <string name="disable_biometrics_setting_title">Disable biometrics unlock while screen off</string>
     <string name="disable_biometrics_setting_summary">Disable biometrics unlock while screen off. Might not work on all devices</string>
     <string name="disable_when_charging_setting_summary">Turn off EnforceDoze when device is plugged in to a charger</string>
@@ -53,6 +55,8 @@
     <string name="persistent_notification_setting_title">Show persistent notification</string>
     <string name="lockscreen_timeout_setting_summary">Ignore lockscreen timeout and enable Doze immediately after screen off</string>
     <string name="lockscreen_timeout_setting_title">Ignore lockscreen timeout</string>
+    <string name="wait_unlock_setting_summary">Wait for device unlock to leave doze and enable disabled features</string>
+    <string name="wait_unlock_setting_title">Wait for unlock to leave doze</string>
     <string name="doze_delay_setting_summary">Add a delay before Doze mode kicks in after screen-off</string>
     <string name="doze_delay_setting_title">Doze delay</string>
     <string name="whitelist_apps_setting_summary">Whitelist apps from Doze mode</string>

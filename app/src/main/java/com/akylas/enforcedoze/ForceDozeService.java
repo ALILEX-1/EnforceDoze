@@ -72,10 +72,12 @@ public class ForceDozeService extends Service {
     boolean useAutoRotateAndBrightnessFix = false;
     boolean showPersistentNotif = false;
     boolean ignoreLockscreenTimeout = false;
+    boolean waitForUnlock = false;
     boolean useNonRootSensorWorkaround = false;
     boolean turnOffAllSensorsInDoze = false;
     boolean turnOffBiometricsInDoze = false;
     boolean turnOnBatterySaverInDoze = false;
+    boolean turnOnAirplaneInDoze = false;
     boolean turnOffWiFiInDoze = false;
     boolean ignoreIfHotspot = false;
     boolean turnOffDataInDoze = false;
@@ -84,6 +86,7 @@ public class ForceDozeService extends Service {
     boolean wasBatterSaverOn = false;
     boolean wasWiFiTurnedOn = false;
     boolean wasMobileDataTurnedOn = false;
+    boolean wasAirplaneOn = false;
     boolean wasHotSpotTurnedOn = false;
     boolean maintenance = false;
     boolean setPendingDozeEnterAlarm = false;
@@ -160,6 +163,7 @@ public class ForceDozeService extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_POWER_CONNECTED);
         filter.addAction(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED);
         if (Utils.isDeviceRunningOnN()) {
@@ -176,9 +180,11 @@ public class ForceDozeService extends Service {
         turnOffAllSensorsInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffAllSensorsInDoze", false);
         turnOffBiometricsInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOffBiometricsInDoze", false);
         turnOnBatterySaverInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnBatterySaverInDoze", false);
+        turnOnAirplaneInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnAirplaneInDoze", false);
         whitelistMusicAppNetwork = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistMusicAppNetwork", false);
         whitelistCurrentApp = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistCurrentApp", false);
         ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", true);
+        waitForUnlock = getDefaultSharedPreferences(getApplicationContext()).getBoolean("waitForUnlock", false);
         useNonRootSensorWorkaround = getDefaultSharedPreferences(getApplicationContext()).getBoolean("useNonRootSensorWorkaround", false);
         dozeEnterDelay = getDefaultSharedPreferences(getApplicationContext()).getInt("dozeEnterDelay", 0);
         useAutoRotateAndBrightnessFix = getDefaultSharedPreferences(getApplicationContext()).getBoolean("autoRotateAndBrightnessFix", false);
@@ -244,6 +250,7 @@ public class ForceDozeService extends Service {
         if (disableMotionSensors) {
             executeCommand("dumpsys sensorservice enable");
         }
+        leaveDoze();
         if (rootSession != null) {
             rootSession.close();
             rootSession = null;
@@ -284,12 +291,16 @@ public class ForceDozeService extends Service {
         log("turnOffBiometricsInDoze: " + turnOffBiometricsInDoze);
         turnOnBatterySaverInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnBatterySaverInDoze", false);
         log("turnOnBatterySaverInDoze: " + turnOnBatterySaverInDoze);
+        turnOnAirplaneInDoze = getDefaultSharedPreferences(getApplicationContext()).getBoolean("turnOnAirplaneInDoze", false);
+        log("turnOnAirplaneInDoze: " + turnOnAirplaneInDoze);
         whitelistMusicAppNetwork = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistMusicAppNetwork", false);
         log("whitelistMusicAppNetwork: " + whitelistMusicAppNetwork);
         whitelistCurrentApp = getDefaultSharedPreferences(getApplicationContext()).getBoolean("whitelistCurrentApp", false);
         log("whitelistCurrentApp: " + whitelistCurrentApp);
-        ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", false);
+        ignoreLockscreenTimeout = getDefaultSharedPreferences(getApplicationContext()).getBoolean("ignoreLockscreenTimeout", true);
         log("ignoreLockscreenTimeout: " + ignoreLockscreenTimeout);
+        waitForUnlock = getDefaultSharedPreferences(getApplicationContext()).getBoolean("waitForUnlock", false);
+        log("waitForUnlock: " + waitForUnlock);
         dozeEnterDelay = getDefaultSharedPreferences(getApplicationContext()).getInt("dozeEnterDelay", 0);
         log("dozeEnterDelay: " + dozeEnterDelay);
         useAutoRotateAndBrightnessFix = getDefaultSharedPreferences(getApplicationContext()).getBoolean("autoRotateAndBrightnessFix", false);
@@ -383,6 +394,43 @@ public class ForceDozeService extends Service {
         }
     }
 
+    public void applyDoze() {
+        if (Utils.isDeviceRunningOnN()) {
+            if (isSuAvailable) {
+                executeCommandWithRoot("dumpsys deviceidle force-idle deep");
+            } else {
+                DozeTunableHandler handler = DozeTunableHandler.getInstance();
+                log("Unrooted device, putting custom values in device_idle_constants...");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    ArrayList<String> commands = handler.getCommandsList();
+                    commands.forEach(this::executeCommand);
+                } else {
+                    Settings.Global.putString(getContentResolver(), "device_idle_constants", handler.getTunableString());
+                }
+            }
+        } else {
+            executeCommand("dumpsys deviceidle force-idle");
+        }
+    }
+
+    public void leaveDoze() {
+        if (Utils.isDeviceRunningOnN()) {
+            if (isSuAvailable) {
+                executeCommandWithRoot("dumpsys deviceidle unforce");
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    executeCommand("device_config reset trusted_defaults device_idle");
+                    executeCommand("dumpsys deviceidle step");
+                } else {
+                    Settings.Global.putString(getContentResolver(), "device_idle_constants", null);
+
+                }
+            }
+        } else {
+            executeCommand("dumpsys deviceidle step");
+        }
+    }
+
     public void enterDoze(Context context) {
         if (!getDeviceIdleState().equals("IDLE") || !lastKnownState.equals("IDLE")) {
             if (!Utils.isScreenOn(context)) {
@@ -443,16 +491,7 @@ public class ForceDozeService extends Service {
                     lastDozeEnterBatteryLife = Utils.getBatteryLevel(getApplicationContext());
                 }
                 log("Entering Doze");
-                if (Utils.isDeviceRunningOnN()) {
-                    if (isSuAvailable) {
-                        executeCommandWithRoot("dumpsys deviceidle force-idle deep");
-                    } else {
-                        log("Unrooted device, putting custom values in device_idle_constants...");
-                        Settings.Global.putString(getContentResolver(), "device_idle_constants", "inactive_to=600000,light_after_inactive_to=300000,idle_after_inactive_to=5100,sensing_to=5100,locating_to=5100,location_accuracy=10000");
-                    }
-                } else {
-                    executeCommand("dumpsys deviceidle force-idle");
-                }
+                applyDoze();
                 lastScreenOff = Utils.getDateCurrentTimeZone(System.currentTimeMillis());
                 
                 if (!disableStats) {
@@ -496,15 +535,7 @@ public class ForceDozeService extends Service {
             lastDozeExitBatteryLife = Utils.getBatteryLevel(getApplicationContext());
         }
         lastKnownState = "ACTIVE";
-        if (Utils.isDeviceRunningOnN()) {
-            if (isSuAvailable) {
-                executeCommandWithRoot("dumpsys deviceidle unforce");
-            } else {
-                Settings.Global.putString(getContentResolver(), "device_idle_constants", null);
-            }
-        } else {
-            executeCommand("dumpsys deviceidle step");
-        }
+        leaveDoze();
 
         log("Current Doze state: " + getDeviceIdleState());
 
@@ -942,6 +973,7 @@ public class ForceDozeService extends Service {
         });
     }
 
+
     public void disableWiFi() {
         if (isSuAvailable) {
             executeCommandWithRoot("svc wifi disable", (commandCode, exitCode, STDOUT, STDERR) -> {
@@ -1005,6 +1037,16 @@ public class ForceDozeService extends Service {
 //        }
         executeCommandWithRoot("settings put global low_power " +(enabled? 1:0));
     }
+    public void setAirplaneState(Context context, boolean enabled) {
+        if (!isSuAvailable) {
+            return;
+        }
+//        if (!Utils.isSecureSettingsPermissionGranted(context)) {
+//            grantSecureSettingsPermission();
+//        }
+        executeCommandWithRoot("settings put global airplane_mode_on " +(enabled? 1:0));
+        executeCommandWithRoot("am broadcast -a android.intent.action.AIRPLANE_MODE --ez state " +(enabled? "true":"false"));
+    }
 
     public void enableWiFi() {
         if (isSuAvailable) {
@@ -1047,15 +1089,7 @@ public class ForceDozeService extends Service {
         public void onReceive(Context context, Intent intent) {
             log("Pending intent broadcast received");
             setPendingDozeEnterAlarm = false;
-            if (Utils.isDeviceRunningOnN()) {
-                if (isSuAvailable) {
-                    executeCommandWithRoot("dumpsys deviceidle force-idle deep");
-                } else {
-                    Settings.Global.putString(getContentResolver(), "device_idle_constants", "inactive_to=600000,light_after_inactive_to=300000,idle_after_inactive_to=5100,sensing_to=5100,locating_to=5100,location_accuracy=10000");
-                }
-            } else {
-                executeCommand("dumpsys deviceidle force-idle");
-            }
+            applyDoze();
         }
     }
 
@@ -1063,6 +1097,7 @@ public class ForceDozeService extends Service {
         log("playingPackageName: " + packageName);
         wasWiFiTurnedOn = wasWiFiTurnedOn || Utils.isWiFiEnabled(context);
         wasMobileDataTurnedOn = wasMobileDataTurnedOn || Utils.isMobileDataEnabled(context) ;
+        wasAirplaneOn = wasAirplaneOn || Utils.isAirplaneEnabled(getContentResolver()) ;
         wasHotSpotTurnedOn = Utils.isHotspotEnabled(context);
         wasBatterSaverOn = wasBatterSaverOn || Utils.isBatterSaverEnabled(getContentResolver());
 
@@ -1077,6 +1112,11 @@ public class ForceDozeService extends Service {
         if (turnOnBatterySaverInDoze) {
             log("Enabling Battery Saver");
             setBatterSaverState(context, true);
+        }
+
+        if (turnOnAirplaneInDoze && (!ignoreIfHotspot || !wasHotSpotTurnedOn) && !wasAirplaneOn && packageName == null) {
+            log("Enabling airplane");
+            setAirplaneState(context, true);
         }
 
         if (turnOffWiFiInDoze && (!ignoreIfHotspot || !wasHotSpotTurnedOn) && wasWiFiTurnedOn && packageName == null) {
@@ -1108,6 +1148,14 @@ public class ForceDozeService extends Service {
     }
 
     public void leaveDozeHandleNetwork(Context context) {
+
+        if (turnOnAirplaneInDoze) {
+            log("wasAirplaneOn: " + wasAirplaneOn);
+            if (!wasAirplaneOn) {
+                log("disabling Airplane");
+                setAirplaneState(context, false);
+            }
+        }
         if (turnOffWiFiInDoze) {
             log("wasWiFiTurnedOn: " + wasWiFiTurnedOn);
             if (wasWiFiTurnedOn) {
@@ -1141,6 +1189,32 @@ public class ForceDozeService extends Service {
         wasMobileDataTurnedOn = false;
     }
 
+    public void handleScreenOn(Context context, int time, int delay) {
+        log("handleScreenOn");
+        log("Last known Doze state: " + lastKnownState);
+
+        if (tempWakeLock != null) {
+            if (tempWakeLock.isHeld()) {
+                log("Releasing ForceDozeTempWakelock");
+                tempWakeLock.release();
+            }
+        }
+
+        leaveDozeHandleNetwork(context);
+
+        if (!getDeviceIdleState().equals("ACTIVE") || !lastKnownState.equals("ACTIVE")) {
+            log("Exiting Doze");
+            exitDoze();
+        } else {
+            if (ignoreLockscreenTimeout) {
+                log("Cancelling enterDoze() because user turned on screen and " + (delay) + "ms has not passed OR disableWhenCharging=true");
+            } else {
+                log("Cancelling enterDoze() because user turned on screen and " + (time) + "ms has not passed OR disableWhenCharging=true");
+            }
+            enterDozeTimer.cancel();
+        }
+    }
+
     class DozeReceiver extends BroadcastReceiver {
 
         @Override
@@ -1152,31 +1226,16 @@ public class ForceDozeService extends Service {
             int delay = dozeEnterDelay * 1000;
             time = time + delay;
 
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+            if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+                log("UNLOCK received");
+                if (waitForUnlock) {
+                    handleScreenOn(context, time, delay);
+                }
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 log("Screen ON received");
-                log("Last known Doze state: " + lastKnownState);
-
-                if (tempWakeLock != null) {
-                    if (tempWakeLock.isHeld()) {
-                        log("Releasing ForceDozeTempWakelock");
-                        tempWakeLock.release();
-                    }
+                if (!waitForUnlock) {
+                    handleScreenOn(context, time, delay);
                 }
-
-                leaveDozeHandleNetwork(context);
-
-                if (!getDeviceIdleState().equals("ACTIVE") || !lastKnownState.equals("ACTIVE")) {
-                    log("Exiting Doze");
-                    exitDoze();
-                } else {
-                    if (ignoreLockscreenTimeout) {
-                        log("Cancelling enterDoze() because user turned on screen and " + (delay) + "ms has not passed OR disableWhenCharging=true");
-                    } else {
-                        log("Cancelling enterDoze() because user turned on screen and " + (time) + "ms has not passed OR disableWhenCharging=true");
-                    }
-                    enterDozeTimer.cancel();
-                }
-
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 log("Screen OFF received");
                 if (disableWhenCharging && Utils.isConnectedToCharger(getApplicationContext())) {

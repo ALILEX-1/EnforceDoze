@@ -215,7 +215,10 @@ public class Utils {
     }
     public static boolean isBatterSaverEnabled(ContentResolver contentResolver) {
         return Settings.Global.getInt(contentResolver, "low_power", 0) >= 1;
-
+    }
+    public static boolean isAirplaneEnabled(ContentResolver contentResolver) {
+        return Settings.Global.getInt(contentResolver,
+                Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
     }
     public static boolean isHotspotEnabled(Context context) {
         WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
