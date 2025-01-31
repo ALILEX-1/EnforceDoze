@@ -23,7 +23,7 @@
     <string name="lockscreen_timeout_dialog_text_p1">Времето на изчакване преди заключване е голямо (</string>
     <string name="more_info_menu_item">Подробности</string>
     <string name="doze_unsupported_more_info">При някои устройства режимът Doze е изключен от производителя. Тази настройка може да го включи на устройства, при които по подразбиране е изключен.\n\nЗабележка: Ще трябва да включвате настройката всеки път, след рестарт на телефона.</string>
-    <string name="no_root_workaround_dialog_text">Ако устройството няма достъп до правата на суперпотребителя, можете ръчно да дадете разрешението „android.permission.DUMP“ (и „android.permission.WRITE_SECURE_SETTINGS“, ако сте с Nougat) на това приложение, като изпълните следната команда за ADB от компютъра си (командата не се разделя, пише се на един ред):\n\n„adb -d shell pm grant com.akylas.enforcedoze android.permission.DUMP“ и същото с разрешението WRITE_SECURE_SETTINGS (ако сте на Nougat)\n\nСлед като изпълните командите рестартирайте приложението, след което ще получите достъп до приложението.</string>
+    <string name="no_root_workaround_dialog_text">Ако устройството няма достъп до правата на суперпотребителя, можете ръчно да дадете разрешението „android.permission.DUMP“ (и „android.permission.WRITE_SECURE_SETTINGS“, ако сте с Nougat) на това приложение, като изпълните следната команда за ADB от компютър:</string>
     <string name="lockscreen_timeout_setting_title">Без зчакване преди заключване</string>
     <string name="lockscreen_timeout_setting_summary">Пренебрегване на времето на изчакване преди заключване и влизане в режим Doze веднага след изключване на екрана</string>
     <string name="lockscreen_timeout_dialog_text_p6">" минути преди да включи Doze, използвайки временен WakeLock. Ако желаете EnforceDoze да включва Doze , намалете времето за заключване на екрана на Веднага в настройките за сигурност на устройството. Ако искате EnforceDoze да включва Doze независимо от времетраенето на заключване на екрана, включете настройката „Пренебрегване на времето за заключване“ в настройките на EnforceDoze."</string>
@@ -169,4 +169,8 @@
     <string name="licenses">лицензи</string>
     <string name="translations">преводи</string>
     <string name="privacy_policy">политика за поверителност</string>
+    <string name="enable_airplane_setting_title">Самолетен режим при изключен екран</string>
+    <string name="enable_airplane_setting_summary">Включване на самолетен режим по време на Doze</string>
+    <string name="wait_unlock_setting_title">Напускане на Doze след отключване</string>
+    <string name="wait_unlock_setting_summary">Изчакване на отключване на устройството, за да б6де напуснат режима Doze и да бъдат включени изключените възможности</string>
 </resources>
