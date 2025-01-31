@@ -34,8 +34,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -492,32 +494,77 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     public void showRootWorkaroundInstructions() {
         String command = "adb -d shell pm grant com.akylas.enforcedoze android.permission.DUMP";
+
+        View customAlertDialogView = LayoutInflater.from(this)
+                .inflate(R.layout.non_root_workaround, null, false);
+
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(getString(R.string.no_root_workaround_dialog_title));
+        builder.setView(customAlertDialogView);
         builder.setMessage(getString(R.string.no_root_workaround_dialog_text));
         builder.setPositiveButton(getString(R.string.okay_button_text), null);
-        builder.setNeutralButton(getString(R.string.copy_command_button_text), new DialogInterface.OnClickListener() {
+        customAlertDialogView.findViewById(R.id.copyBtn1).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
+            public void onClick(View v) {
+                SpannableString command = (SpannableString) ((TextView)customAlertDialogView.findViewById(R.id.commandTxt1)).getText();
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Copied text", command);
                 clipboard.setPrimaryClip(clip);
-
             }
         });
-        builder.setNegativeButton(getString(R.string.share_command_button_text), new DialogInterface.OnClickListener() {
+        customAlertDialogView.findViewById(R.id.copyBtn2).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
+            public void onClick(View v) {
+                SpannableString command = (SpannableString) ((TextView)customAlertDialogView.findViewById(R.id.commandTxt2)).getText();
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Copied text", command);
+                clipboard.setPrimaryClip(clip);
+            }
+        });
+        customAlertDialogView.findViewById(R.id.shareBtn1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpannableString command = (SpannableString) ((TextView)customAlertDialogView.findViewById(R.id.commandTxt1)).getText();
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, command);
                 sendIntent.setType("text/plain");
                 startActivity(sendIntent);
-
             }
         });
+        customAlertDialogView.findViewById(R.id.shareBtn2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpannableString command = (SpannableString) ((TextView)customAlertDialogView.findViewById(R.id.commandTxt2)).getText();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, command);
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+            }
+        });
+//        builder.setNeutralButton(getString(R.string.copy_command_button_text), new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                dialogInterface.dismiss();
+//                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+//                ClipData clip = ClipData.newPlainText("Copied text", command);
+//                clipboard.setPrimaryClip(clip);
+//
+//            }
+//        });
+//        builder.setNegativeButton(getString(R.string.share_command_button_text), new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                dialogInterface.dismiss();
+//                Intent sendIntent = new Intent();
+//                sendIntent.setAction(Intent.ACTION_SEND);
+//                sendIntent.putExtra(Intent.EXTRA_TEXT, command);
+//                sendIntent.setType("text/plain");
+//                startActivity(sendIntent);
+//
+//            }
+//        });
         builder.show();
     }
 
