@@ -10,12 +10,14 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,36 +36,8 @@ import eu.chainfire.libsuperuser.Shell;
 public class DozeTunablesActivity extends AppCompatActivity {
 
     public static String TAG = "EnforceDoze";
-    public String TUNABLE_STRING = "null";
     public static boolean suAvailable = false;
 
-    private long LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT = 5 * 60 * 1000L;
-    private long LIGHT_PRE_IDLE_TIMEOUT = 10 * 60 * 1000L;
-    private long LIGHT_IDLE_TIMEOUT = 5 * 60 * 1000L;
-    private float LIGHT_IDLE_FACTOR = 2f;
-    private long LIGHT_MAX_IDLE_TIMEOUT = 15 * 60 * 1000L;
-    private long LIGHT_IDLE_MAINTENANCE_MIN_BUDGET = 1 * 60 * 1000L;
-    private long LIGHT_IDLE_MAINTENANCE_MAX_BUDGET = 5 * 60 * 1000L;
-    private long MIN_LIGHT_MAINTENANCE_TIME = 5 * 1000L;
-    private long MIN_DEEP_MAINTENANCE_TIME = 30 * 1000L;
-    private long INACTIVE_TIMEOUT = 30 * 60 * 1000L;
-    private long SENSING_TIMEOUT = 4 * 60 * 1000L;
-    private long LOCATING_TIMEOUT = 30 * 1000L;
-    private float LOCATION_ACCURACY = 20;
-    private long MOTION_INACTIVE_TIMEOUT = 10 * 60 * 1000L;
-    private long IDLE_AFTER_INACTIVE_TIMEOUT = 30 * 60 * 1000L;
-    private long IDLE_PENDING_TIMEOUT = 5 * 60 * 1000L;
-    private long MAX_IDLE_PENDING_TIMEOUT = 10 * 60 * 1000L;
-    private float IDLE_PENDING_FACTOR = 2;
-    private long IDLE_TIMEOUT = 60 * 60 * 1000L;
-    private long MAX_IDLE_TIMEOUT = 6 * 60 * 60 * 1000L;
-    private long IDLE_FACTOR = 2;
-    private long MIN_TIME_TO_ALARM = 60 * 60 * 1000L;
-    private long MAX_TEMP_APP_WHITELIST_DURATION = 5 * 60 * 1000L;
-    private long MMS_TEMP_APP_WHITELIST_DURATION = 60 * 1000L;
-    private long SMS_TEMP_APP_WHITELIST_DURATION = 20 * 1000L;
-    private long NOTIFICATION_WHITELIST_DURATION = 30 * 1000L;
-    private SharedPreferences preferences;
 
     private static void log(String message) {
         logToLogcat(TAG, message);
@@ -78,11 +52,9 @@ public class DozeTunablesActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new DozeTunablesFragment())
                 .commit();
-
-        TUNABLE_STRING = getTunableString();
     }
 
     @Override
@@ -108,87 +80,25 @@ public class DozeTunablesActivity extends AppCompatActivity {
             applyTunables();
         } else if (id == R.id.action_copy_tunables) {
             showCopyTunableDialog();
-        } else if (id == android.R.id.home) {
+        } else
+            if (id == android.R.id.home) {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void loadTunables() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        //TODO: load current tunables
-        LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT, "300000"));
-        LIGHT_PRE_IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_PRE_IDLE_TIMEOUT, "600000"));
-        LIGHT_IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_TIMEOUT, "300000"));
-        LIGHT_IDLE_FACTOR = Float.parseFloat(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_FACTOR, "2"));
-        LIGHT_MAX_IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_MAX_IDLE_TIMEOUT, "900000"));
-        LIGHT_IDLE_MAINTENANCE_MIN_BUDGET = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_MAINTENANCE_MIN_BUDGET, "60000"));
-        LIGHT_IDLE_MAINTENANCE_MAX_BUDGET = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LIGHT_IDLE_MAINTENANCE_MAX_BUDGET, "300000"));
-        MIN_LIGHT_MAINTENANCE_TIME = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MIN_LIGHT_MAINTENANCE_TIME, "5000"));
-        MIN_DEEP_MAINTENANCE_TIME = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MIN_DEEP_MAINTENANCE_TIME, "30000"));
-        INACTIVE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_INACTIVE_TIMEOUT, "1800000"));
-        SENSING_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_SENSING_TIMEOUT, "240000"));
-        LOCATING_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_LOCATING_TIMEOUT, "30000"));
-        LOCATION_ACCURACY = Float.parseFloat(preferences.getString(DozeTunableConstants.KEY_LOCATION_ACCURACY, "20"));
-        MOTION_INACTIVE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MOTION_INACTIVE_TIMEOUT, "600000"));
-        IDLE_AFTER_INACTIVE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_IDLE_AFTER_INACTIVE_TIMEOUT, "1800000"));
-        IDLE_PENDING_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_IDLE_PENDING_TIMEOUT, "30000"));
-        MAX_IDLE_PENDING_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MAX_IDLE_PENDING_TIMEOUT, "600000"));
-        IDLE_PENDING_FACTOR = Float.parseFloat(preferences.getString(DozeTunableConstants.KEY_IDLE_PENDING_FACTOR, "2"));
-        IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_IDLE_TIMEOUT, "3600000"));
-        MAX_IDLE_TIMEOUT = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MAX_IDLE_TIMEOUT, "21600000"));
-        IDLE_FACTOR  = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_IDLE_FACTOR, "2"));
-        MIN_TIME_TO_ALARM = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MIN_TIME_TO_ALARM, "3600000"));
-        MAX_TEMP_APP_WHITELIST_DURATION = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MAX_TEMP_APP_WHITELIST_DURATION, "300000"));
-        MMS_TEMP_APP_WHITELIST_DURATION = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_MMS_TEMP_APP_WHITELIST_DURATION, "60000"));
-        SMS_TEMP_APP_WHITELIST_DURATION = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_SMS_TEMP_APP_WHITELIST_DURATION, "20000"));
-        NOTIFICATION_WHITELIST_DURATION = Long.parseLong(preferences.getString(DozeTunableConstants.KEY_NOTIFICATION_WHITELIST_DURATION, "30000"));
-    }
-
-    public String getTunableString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(DozeTunableConstants.KEY_LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT + "=" + LIGHT_IDLE_AFTER_INACTIVE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_LIGHT_PRE_IDLE_TIMEOUT + "=" + LIGHT_PRE_IDLE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_LIGHT_IDLE_TIMEOUT + "=" + LIGHT_IDLE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_LIGHT_IDLE_FACTOR + "=" + LIGHT_IDLE_FACTOR + ",");
-        sb.append(DozeTunableConstants.KEY_LIGHT_MAX_IDLE_TIMEOUT + "=" + LIGHT_MAX_IDLE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_LIGHT_IDLE_MAINTENANCE_MIN_BUDGET + "=" + LIGHT_IDLE_MAINTENANCE_MIN_BUDGET + ",");
-        sb.append(DozeTunableConstants.KEY_LIGHT_IDLE_MAINTENANCE_MAX_BUDGET + "=" + LIGHT_IDLE_MAINTENANCE_MAX_BUDGET + ",");
-        sb.append(DozeTunableConstants.KEY_MIN_LIGHT_MAINTENANCE_TIME + "=" + MIN_LIGHT_MAINTENANCE_TIME + ",");
-        sb.append(DozeTunableConstants.KEY_MIN_DEEP_MAINTENANCE_TIME + "=" + MIN_DEEP_MAINTENANCE_TIME + ",");
-        sb.append(DozeTunableConstants.KEY_INACTIVE_TIMEOUT + "=" + INACTIVE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_SENSING_TIMEOUT + "=" + SENSING_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_LOCATING_TIMEOUT + "=" + LOCATING_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_LOCATION_ACCURACY + "=" + LOCATION_ACCURACY + ",");
-        sb.append(DozeTunableConstants.KEY_MOTION_INACTIVE_TIMEOUT + "=" + MOTION_INACTIVE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_IDLE_AFTER_INACTIVE_TIMEOUT + "=" + IDLE_AFTER_INACTIVE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_IDLE_PENDING_TIMEOUT + "=" + IDLE_PENDING_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_MAX_IDLE_PENDING_TIMEOUT + "=" + MAX_IDLE_PENDING_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_IDLE_PENDING_FACTOR + "=" + IDLE_PENDING_FACTOR + ",");
-        sb.append(DozeTunableConstants.KEY_IDLE_TIMEOUT + "=" + IDLE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_MAX_IDLE_TIMEOUT + "=" + MAX_IDLE_TIMEOUT + ",");
-        sb.append(DozeTunableConstants.KEY_IDLE_FACTOR + "=" + IDLE_FACTOR + ",");
-        sb.append(DozeTunableConstants.KEY_MIN_TIME_TO_ALARM + "=" + MIN_TIME_TO_ALARM + ",");
-        sb.append(DozeTunableConstants.KEY_MAX_TEMP_APP_WHITELIST_DURATION + "=" + MAX_TEMP_APP_WHITELIST_DURATION + ",");
-        sb.append(DozeTunableConstants.KEY_MMS_TEMP_APP_WHITELIST_DURATION + "=" + MMS_TEMP_APP_WHITELIST_DURATION + ",");
-        sb.append(DozeTunableConstants.KEY_SMS_TEMP_APP_WHITELIST_DURATION + "=" + SMS_TEMP_APP_WHITELIST_DURATION + ",");
-        sb.append(DozeTunableConstants.KEY_NOTIFICATION_WHITELIST_DURATION + "=" + NOTIFICATION_WHITELIST_DURATION);
-        return sb.toString();
-    }
-
     public void applyTunables() {
-        loadTunables();
-        TUNABLE_STRING = getTunableString();
-        log("Setting device_idle_constants=" + TUNABLE_STRING);
-        executeCommand("settings put global device_idle_constants " + TUNABLE_STRING);
+        String tunable_string = DozeTunableHandler.getInstance().getTunableString();
+        log("Setting device_idle_constants=" + tunable_string);
+        executeCommand("settings put global device_idle_constants " + tunable_string);
         Toast.makeText(this, getString(R.string.applied_success_text), Toast.LENGTH_SHORT).show();
     }
 
     public void showCopyTunableDialog() {
+        String tunable_string = DozeTunableHandler.getInstance().getTunableString();
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(getString(R.string.adb_command_text));
-        builder.setMessage("You can apply the new values using ADB by running the following command:\n\nadb shell settings put global device_idle_constants " + TUNABLE_STRING);
+        builder.setMessage("You can apply the new values using ADB by running the following command:\n\nadb shell settings put global device_idle_constants " + tunable_string);
         builder.setPositiveButton(getString(R.string.close_button_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -199,7 +109,7 @@ public class DozeTunablesActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Copied Tunable k/v string", "adb shell settings put global device_idle_constants " + TUNABLE_STRING);
+                ClipData clip = ClipData.newPlainText("Copied Tunable k/v string", "adb shell settings put global device_idle_constants " + tunable_string);
                 clipboard.setPrimaryClip(clip);
                 dialogInterface.dismiss();
             }
@@ -230,14 +140,13 @@ public class DozeTunablesActivity extends AppCompatActivity {
     }
 
     @SuppressLint("ValidFragment")
-    public  static class DozeTunablesFragment extends PreferenceFragment {
+    public  static class DozeTunablesFragment extends PreferenceFragmentCompat {
 
         MaterialDialog grantPermProgDialog;
         boolean isSuAvailable = false;
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+        public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
             addPreferencesFromResource(R.xml.prefs_doze_tunables);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             final PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("tunablesPreferenceScreen");
@@ -275,7 +184,6 @@ public class DozeTunablesActivity extends AppCompatActivity {
                             if (!Utils.isSecureSettingsPermissionGranted(getActivity())) {
                                 executeCommand("pm grant com.akylas.enforcedoze android.permission.WRITE_SECURE_SETTINGS");
                             }
-                            ((DozeTunablesActivity)getActivity()).loadTunables();
                         } else {
                             log("SU permission denied or not available");
                             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
@@ -298,9 +206,9 @@ public class DozeTunablesActivity extends AppCompatActivity {
                 });
             } else {
                 suAvailable = true;
-                ((DozeTunablesActivity)getActivity()).loadTunables();
             }
         }
+
 
         public void executeCommand(final String command) {
             AsyncTask.execute(new Runnable() {
