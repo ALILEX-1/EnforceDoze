@@ -202,4 +202,11 @@
     <string name="app_blocklist_setting_title">Lista de aplicaciones bloqueadas en Doze</string>
     <string name="disable_motion_sensors_setting_title">Desactivar los sensores de movimiento con la pantalla apagada</string>
     <string name="copy_command_button_text">Comando copiar</string>
+    <string name="enable_battery_saver_setting_summary">Activar el ahorro de batería mientras el dispositivo está en hibernación</string>
+    <string name="ignore_current_app_setting_title">Poner en lista blanca la aplicación actual</string>
+    <string name="usage_access_permission">Acceso al uso de la aplicación</string>
+    <string name="usage_access_explanation">Para consultar la aplicación actual, la aplicación necesita el permiso de Acceso de Uso. Debe habilitarlo abriendo la configuración de Acceso al uso</string>
+    <string name="open_button_text">Abrir</string>
+    <string name="ignore_current_app_setting_summary">Actualmente se enfoca aplicación será lista blanca, incluso si en la lista de bloqueo</string>
+    <string name="enable_battery_saver_setting_title">Activar Ahorro de Batería con pantalla apagada</string>
 </resources>
