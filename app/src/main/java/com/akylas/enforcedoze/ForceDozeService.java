@@ -964,12 +964,18 @@ public class ForceDozeService extends Service {
     public void disableMobileData() {
         executeCommandWithRoot("svc data disable", (commandCode, exitCode, STDOUT, STDERR) -> {
             log("disableMobileData: " + Utils.isMobileDataEnabled(getApplicationContext()));
+            if (Utils.isMobileDataEnabled(getApplicationContext())) {
+                Log.e(TAG, "disableMobileData failed, data still active");
+            }
         });
     }
 
     public void enableMobileData() {
         executeCommandWithRoot("svc data enable", (commandCode, exitCode, STDOUT, STDERR) -> {
             log("enableMobileData: " + Utils.isMobileDataEnabled(getApplicationContext()));
+            if (Utils.isMobileDataEnabled(getApplicationContext())) {
+                Log.e(TAG, "enableMobileData failed, data still inactive");
+            }
         });
     }
 
@@ -983,6 +989,9 @@ public class ForceDozeService extends Service {
             WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifi.setWifiEnabled(false);
             log("disableWiFi: " + Utils.isWiFiEnabled(getApplicationContext()));
+        }
+        if (Utils.isMobileDataEnabled(getApplicationContext())) {
+            Log.e(TAG, "disableWiFi failed, wifi still active");
         }
     }
     public void setAllSensorsState(Context context, boolean enabled) {
@@ -1057,6 +1066,10 @@ public class ForceDozeService extends Service {
             WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifi.setWifiEnabled(true);
             log("enableWiFi: " + Utils.isWiFiEnabled(getApplicationContext()));
+        }
+
+        if (Utils.isMobileDataEnabled(getApplicationContext())) {
+            Log.e(TAG, "enableWiFi failed, wifi still inactive");
         }
     }
 
@@ -1227,12 +1240,12 @@ public class ForceDozeService extends Service {
             time = time + delay;
 
             if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-                log("UNLOCK received");
+                log("UNLOCK received " + waitForUnlock);
                 if (waitForUnlock) {
                     handleScreenOn(context, time, delay);
                 }
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                log("Screen ON received");
+                log("Screen ON received" + waitForUnlock);
                 if (!waitForUnlock) {
                     handleScreenOn(context, time, delay);
                 }
