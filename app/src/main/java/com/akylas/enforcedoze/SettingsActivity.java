@@ -431,6 +431,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Preference turnOffAllSensorsInDoze = (Preference) findPreference("turnOffAllSensorsInDoze");
                     Preference turnOnBatterySaverInDoze = (Preference) findPreference("turnOnBatterySaverInDoze");
                     Preference turnOffBiometricsInDoze = (Preference) findPreference("turnOffBiometricsInDoze");
+                    Preference turnOnAirplaneInDoze = (Preference) findPreference("turnOnAirplaneInDoze");
                     if (enabled) {
                         turnOffDataInDoze.setEnabled(true);
                         turnOffDataInDoze.setSummary(getString(R.string.disable_data_during_doze_setting_summary));
@@ -444,6 +445,8 @@ public class SettingsActivity extends AppCompatActivity {
                         turnOnBatterySaverInDoze.setSummary(getString(R.string.enable_battery_saver_setting_summary));
                         turnOffBiometricsInDoze.setEnabled(true);
                         turnOffBiometricsInDoze.setSummary(getString(R.string.disable_biometrics_setting_summary));
+                        turnOnAirplaneInDoze.setEnabled(true);
+                        turnOnAirplaneInDoze.setSummary(getString(R.string.enable_airplane_setting_summary));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             Preference turnOffWiFiInDoze = (Preference) findPreference("turnOffWiFiInDoze");
                             turnOffWiFiInDoze.setEnabled(true);
@@ -462,11 +465,14 @@ public class SettingsActivity extends AppCompatActivity {
                         turnOnBatterySaverInDoze.setSummary(getString(R.string.root_required_text));
                         turnOffBiometricsInDoze.setEnabled(false);
                         turnOffBiometricsInDoze.setSummary(getString(R.string.root_required_text));
+                        turnOnAirplaneInDoze.setEnabled(false);
+                        turnOnAirplaneInDoze.setSummary(getString(R.string.root_required_text));
                         PreferenceManager.getDefaultSharedPreferences(getContext())
                                 .edit()
                                 .putBoolean("turnOnBatterySaverInDoze", false)
                                 .putBoolean("turnOffAllSensorsInDoze", false)
                                 .putBoolean("turnOffBiometricsInDoze", false)
+                                .putBoolean("turnOnAirplaneInDoze", false)
                                 .apply();
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
