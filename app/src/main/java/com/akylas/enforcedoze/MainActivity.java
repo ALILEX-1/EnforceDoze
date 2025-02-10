@@ -24,6 +24,7 @@ import android.preference.PreferenceManager;
 import android.service.quicksettings.TileService;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -85,7 +86,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         CustomTabs.with(getApplicationContext()).warm();
         settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

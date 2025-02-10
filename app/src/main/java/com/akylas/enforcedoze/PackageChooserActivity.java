@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nanotasks.BackgroundWork;
 import com.nanotasks.Completion;
@@ -34,6 +36,7 @@ public class PackageChooserActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.package_chooser_layout);
+
         pm = getPackageManager();
 
         progressDialog = new MaterialDialog.Builder(this)

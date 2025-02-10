@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.MenuItem;
 import android.view.View;
 
@@ -24,10 +26,9 @@ public class AboutAppActivity extends AppCompatActivity {
 
         CustomTabs.with(getApplicationContext()).warm();
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setElevation(0f);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
