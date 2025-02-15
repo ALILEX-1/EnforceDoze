@@ -73,7 +73,7 @@
                     android:fontFamily="sans-serif-light"
                     android:text="@string/version_num_text"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#586174" />
+                    android:textColor="#9ba0aa" />
 
 
                 <TextView
