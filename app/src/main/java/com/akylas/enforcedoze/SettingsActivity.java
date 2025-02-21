@@ -66,6 +66,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    public static void reloadSettings(Context context) {
+        if (Utils.isMyServiceRunning(ForceDozeService.class, context)) {
+            Intent intent = new Intent("reload-settings");
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -79,10 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
             nonRootSession.close();
             nonRootSession = null;
         }
-        if (Utils.isMyServiceRunning(ForceDozeService.class, SettingsActivity.this)) {
-            Intent intent = new Intent("reload-settings");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }
+        reloadSettings(this);
     }
 
     @Override
@@ -96,7 +100,7 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
+    public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         boolean isSuAvailable = false;
 
@@ -122,7 +126,6 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
         }
 
         @Override
@@ -152,6 +155,7 @@ public class SettingsActivity extends AppCompatActivity {
             SwitchPreferenceCompat autoRotateFixPref = (SwitchPreferenceCompat) findPreference("autoRotateAndBrightnessFix");
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
             resetForceDozePref.setOnPreferenceClickListener(preference -> {
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
@@ -381,7 +385,6 @@ public class SettingsActivity extends AppCompatActivity {
                                 .putBoolean("showPersistentNotif", false)
                                 .apply();
                     }
-                    return;
 
             }
 
@@ -559,6 +562,11 @@ public class SettingsActivity extends AppCompatActivity {
                     log(s);
                 }
             }
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+            reloadSettings(getActivity());
         }
     }
 }
