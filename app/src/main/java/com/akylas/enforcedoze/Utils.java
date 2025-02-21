@@ -16,6 +16,8 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.PowerManager;
+
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -269,20 +271,15 @@ public class Utils {
     }
 
     public static boolean isScreenOn(Context context) {
-        DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
-        for (Display display : dm.getDisplays()) {
-            if (display.getState() == Display.STATE_ON
-                    || display.getState() == Display.STATE_UNKNOWN) {
-                return true;
-            }
-        }
-        return false;
+
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        return pm != null && pm.isInteractive();
     }
     static class ReloadSettingsReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             reloadSettings();
-        }
+        }    
     }
     static ReloadSettingsReceiver reloadSettingsReceiver;
     static boolean disableLogcat = false;
