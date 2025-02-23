@@ -252,7 +252,8 @@ public class ForceDozeService extends Service {
         if (disableMotionSensors) {
             executeCommand("dumpsys sensorservice enable");
         }
-        leaveDoze();
+        //ensure we exit doze if stopped from background
+        exitDoze(getDeviceIdleState());
         if (rootSession != null) {
             rootSession.close();
             rootSession = null;
@@ -540,7 +541,7 @@ public class ForceDozeService extends Service {
         lastKnownState = "ACTIVE";
         leaveDoze();
 
-        log("Current Doze state: " + newDeviceIdleState);
+        log("exitDoze current Doze state: " + newDeviceIdleState);
 
         if (!disableStats) {
             dozeUsageData.add(Long.toString(System.currentTimeMillis()).concat(",").concat(Float.toString(Utils.isConnectedToCharger(getApplicationContext()) ? 0.0f : Utils.getBatteryLevel(getApplicationContext()))).concat(",").concat("EXIT"));

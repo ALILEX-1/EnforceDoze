@@ -83,6 +83,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         logToLogcat(TAG, message);
     }
 
+    private void updateToggleState() {
+        serviceEnabled = settings.getBoolean("serviceEnabled", false);
+        if (serviceEnabled) {
+            textViewStatus.setText(R.string.service_active);
+            toggleForceDozeSwitch.setChecked(true);
+        } else {
+            textViewStatus.setText(R.string.service_inactive);
+            toggleForceDozeSwitch.setChecked(false);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         isDozeEnabledByOEM = Utils.checkForAutoPowerModesFlag();
 //        showDonateDevDialog = settings.getBoolean("showDonateDevDialog2", true);
-        serviceEnabled = settings.getBoolean("serviceEnabled", false);
         isDozeDisabled = settings.getBoolean("isDozeDisabled", false);
         isSuAvailable = settings.getBoolean("isSuAvailable", false);
         ignoreLockscreenTimeout = settings.getBoolean("ignoreLockscreenTimeout", true);
@@ -115,13 +125,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             requestReadPhoneStatePermission();
         }
 
-        if (serviceEnabled) {
-            textViewStatus.setText(R.string.service_active);
-            toggleForceDozeSwitch.setChecked(true);
-        } else {
-            textViewStatus.setText(R.string.service_inactive);
-            toggleForceDozeSwitch.setChecked(false);
-        }
+        updateToggleState();
 
         toggleForceDozeSwitch.setOnCheckedChangeListener(this);
 
@@ -270,6 +274,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         .show();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateToggleState();
     }
 
     final int POST_NOTIF_PERMISSION_REQUEST_CODE =112;
