@@ -566,7 +566,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-            reloadSettings(getActivity());
+            if (getActivity() != null) {
+                reloadSettings(getActivity());
+            }
         }
     }
 }
