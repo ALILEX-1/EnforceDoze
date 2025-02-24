@@ -1,6 +1,7 @@
 package com.akylas.enforcedoze;
 
 import static com.akylas.enforcedoze.Utils.logToLogcat;
+import static com.akylas.enforcedoze.Utils.startForceDozeService;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                             toggleForceDozeSwitch.setChecked(true);
                             if (!Utils.isMyServiceRunning(ForceDozeService.class, MainActivity.this)) {
                                 log("Starting ForceDozeService");
-                                startService(new Intent(context, ForceDozeService.class));
+                                startForceDozeService(context);
                             } else {
                                 log("Service already running");
                             }
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             textViewStatus.setText(R.string.service_active);
             if (!Utils.isMyServiceRunning(ForceDozeService.class, MainActivity.this)) {
                 log("Starting ForceDozeService");
-                startService(new Intent(this, ForceDozeService.class));
+                Utils.startForceDozeService(this);
             } else {
                 log("Service already running");
             }

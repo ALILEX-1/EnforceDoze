@@ -2,7 +2,9 @@ package com.akylas.enforcedoze;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AppOpsManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -37,6 +39,20 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class Utils {
+
+    public static void startForceDozeService(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(context, ForceDozeService.class);
+            PendingIntent pi = PendingIntent.getForegroundService(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+            if (mgr.canScheduleExactAlarms()) {
+                mgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 200 ,pi);
+            }
+        } else {
+            context.startService(new Intent(context, ForceDozeService.class));
+        }
+    }
 
     public static boolean isMyServiceRunning(Class<?> serviceClass, Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);

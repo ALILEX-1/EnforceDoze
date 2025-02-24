@@ -274,6 +274,7 @@ public class ForceDozeService extends Service {
             hidePersistentNotification();
         }
         addSelfToDozeWhitelist();
+        enterDoze(this);
         lastKnownState = getDeviceIdleState();
         return START_STICKY;
     }
