@@ -549,7 +549,7 @@ public class ForceDozeService extends Service {
             saveDozeDataStats();
         }
 
-        if (dozeAppBlocklist.size() != 0) {
+        if (dozeAppBlocklist.size() != 0) {C
             log("Re-enabling apps that are in the Doze app blocklist");
             for (String pkg : dozeAppBlocklist) {
                 setPackageState(getApplicationContext(), pkg, true);
@@ -1274,7 +1274,7 @@ public class ForceDozeService extends Service {
                 }
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 log("Screen ON received" + waitForUnlock);
-                if (!waitForUnlock) {
+                if (!Utils.isDeviceLocked(context) || !waitForUnlock) {
                     handleScreenOn(context, time, delay);
                 }
                 // we always enable biometrics on screen on for the user to be able to unlock

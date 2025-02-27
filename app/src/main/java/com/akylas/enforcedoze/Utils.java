@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.AppOpsManager;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -65,27 +66,19 @@ public class Utils {
     }
 
     public static boolean isWriteSettingsPermissionGranted(Context context) {
-        if (context.checkCallingOrSelfPermission(Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else return false;
+        return context.checkCallingOrSelfPermission(Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
     }
 
     public static boolean isDumpPermissionGranted(Context context) {
-        if (context.checkCallingOrSelfPermission(Manifest.permission.DUMP) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else return false;
+        return context.checkCallingOrSelfPermission(Manifest.permission.DUMP) == PackageManager.PERMISSION_GRANTED;
     }
 
     public static boolean isPostNotificationPermissionGranted(Context context) {
-        if (context.checkCallingOrSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else return false;
+        return context.checkCallingOrSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
     }
 
     public static boolean isReadPhoneStatePermissionGranted(Context context) {
-        if (context.checkCallingOrSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else return false;
+        return context.checkCallingOrSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     public static boolean isUsageStatsPermissionGranted(Context context) {
@@ -103,15 +96,11 @@ public class Utils {
         return granted;
     }
     public static boolean isReadLogsPermissionGranted(Context context) {
-        if (context.checkCallingOrSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else return false;
+        return context.checkCallingOrSelfPermission(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED;
     }
 
     public static boolean isSecureSettingsPermissionGranted(Context context) {
-        if (context.checkCallingOrSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED)
-            return true;
-        else return false;
+        return context.checkCallingOrSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
     }
     public static boolean isSecureSensorPrivacyPermissionGranted(Context context) {
         if (context.checkCallingOrSelfPermission("android.permission.MANAGE_SENSOR_PRIVACY") == PackageManager.PERMISSION_GRANTED)
@@ -287,9 +276,12 @@ public class Utils {
     }
 
     public static boolean isScreenOn(Context context) {
-
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return pm != null && pm.isInteractive();
+    }
+    public static boolean isDeviceLocked(Context context) {
+        KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        return km.isKeyguardLocked();
     }
     static class ReloadSettingsReceiver extends BroadcastReceiver {
         @Override
