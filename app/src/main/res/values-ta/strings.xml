@@ -23,7 +23,7 @@
     <string name="okay_button_text">சரி</string>
     <string name="copy_command_button_text">நகல் கட்டளை</string>
     <string name="share_command_button_text">பகிர்வு கட்டளை</string>
-    <string name="no_root_workaround_dialog_text">உங்கள் சாதனம் வேரூன்றவில்லை என்றால், உங்கள் கணினியிலிருந்து பின்வரும் ADB கட்டளையை இயக்குவதன் மூலம் இந்த பயன்பாட்டிற்கு \'Android.permission.dump\' (மற்றும் \'android.permission.write_secure_settings\' என்ற அனுமதியை கைமுறையாக வழங்கலாம் கட்டளை ஒரு வரி, பிரிக்கப்படவில்லை):\n\n db -d ஓடு pm கிராண்ட் com.akylas.enforcedoze android.permission.dump மற்றும் write_secure_settings அனுமதியுடன் (ந ou கடையில் இருந்தால்)\n\n நீங்கள் செய்தவுடன், தயவுசெய்து இந்த பயன்பாட்டை மூடி மீண்டும் தொடங்கவும், நீங்கள் பயன்பாட்டை சரியாக அணுக முடியும்.</string>
+    <string name="no_root_workaround_dialog_text">உங்கள் சாதனம் வேரூன்றவில்லை என்றால், உங்கள் கணினியிலிருந்து பின்வரும் ADB கட்டளையை இயக்குவதன் மூலம் இந்தப் பயன்பாட்டிற்கு \'Android.permission.dump\' (மற்றும் \'android.permission.write_secure_settings\' என்ற அனுமதியை கைமுறையாக வழங்கலாம்:</string>
     <string name="lockscreen_timeout_dialog_title">பூட்டு திரை நேரம் முடிந்தது</string>
     <string name="lockscreen_timeout_dialog_text_p1">உங்கள் சாதனத்தில் பூட்டு திரை காலக்கெடு மதிப்பு மிக அதிகம் (</string>
     <string name="open_security_settings_button_text">திறந்த பாதுகாப்பு அமைப்புகள்</string>
